@@ -21,13 +21,13 @@ const Navbar = () => {
 				<div className='collapse navbar-collapse' id='navbarNav'>
 					<ul className='navbar-nav'>
 						<li className='nav-item'>
-							<a className='nav-link active' aria-current='page' href='#'>
+							<a className='nav-link active' aria-current='page' href='/'>
 								Home
 							</a>
 						</li>
 						<li className='nav-item'>
-							<a className='nav-link' href='#'>
-								Features
+							<a className='nav-link' href='Solicitudes'>
+								Solicitudes
 							</a>
 						</li>
 						<li className='nav-item'>
@@ -35,13 +35,13 @@ const Navbar = () => {
 								Pricing
 							</a>
 						</li>
-						<li className='nav-item'>
-							<a className='nav-link disabled' href='#' tabIndex='-1' aria-disabled='true'>
-								Disabled
-							</a>
-						</li>
 					</ul>
 				</div>
+				<form className='d-flex'>
+					<a className='nav-link d-flex' href='Perfil' tabIndex='-1' aria-disabled='true'>
+						Perfil
+					</a>
+				</form>
 			</div>
 		</nav>
 	);
