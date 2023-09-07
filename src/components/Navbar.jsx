@@ -1,8 +1,7 @@
-import React from 'react'; // import react module
 import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link';
 
-const Navbar = () => {
+export default function Navbar() {
 	return (
 		<nav className='navbar navbar-expand-lg navbar-light bg-light'>
 			<div className='container-fluid'>
@@ -22,22 +21,22 @@ const Navbar = () => {
 				<form className='collapse navbar-collapse me-auto' id='Navbar'>
 					<ul className='navbar-nav me-auto mb-2 mb-lg-0'>
 						<li className='nav-item'>
-							<Link className='nav-link' href='/solicitudes'>
+							<Link className='nav-link' href='/Solicitudes'>
 								Solicitudes
 							</Link>
 						</li>
 						<li className='nav-item'>
-							<Link className='nav-link' href='/inventario'>
+							<Link className='nav-link' href='/Inventario'>
 								Inventario
 							</Link>
 						</li>
 						<li>
-							<Link className='nav-link' href='/usuarios'>
+							<Link className='nav-link' href='/Usuarios'>
 								Usuarios
 							</Link>
 						</li>
 						<li>
-							<Link className='nav-link' href='/perfil'>
+							<Link className='nav-link' href='/Perfil'>
 								Perfil
 							</Link>
 						</li>
@@ -46,5 +45,4 @@ const Navbar = () => {
 			</div>
 		</nav>
 	);
-};
-export default Navbar;
+}
