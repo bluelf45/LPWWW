@@ -1,5 +1,5 @@
 import Layout from './components/layout';
-export default function perfil() {
+export default function Perfil() {
 	return (
 		<>
 			<Layout>

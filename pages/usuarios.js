@@ -1,5 +1,5 @@
 import Layout from './components/layout';
-export default function usuario() {
+export default function Usuarios() {
 	return (
 		<>
 			<Layout>
