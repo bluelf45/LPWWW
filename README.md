@@ -16,5 +16,5 @@ Funcionalidades:
         <li>Generar Ticket de Respaldo de Préstamos y Devolución a cuentas de Usuarios solicitantes.
         <li>Vista tickets de respaldo y reportes.
         <li> RF.12 Alerta de inventario, actualmente por frontend lo dejamos de color rojo en la pagina</li>
-        <li> Vista de alumno moroso </li>
+        <li> bloquear alumno moroso Madge</li>
 </ol>
