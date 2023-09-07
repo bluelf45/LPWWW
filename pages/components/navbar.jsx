@@ -27,19 +27,19 @@ const Navbar = () => {
 							</Link>
 						</li>
 						<li className='nav-item'>
-							<Link className='nav-link' href='/'>
+							<Link className='nav-link' href='/inventario'>
 								Inventario
 							</Link>
 						</li>
 						<li>
-							<a className='nav-link' href='/usuarios' tabIndex='-1' aria-disabled='true'>
+							<Link className='nav-link' href='/usuarios'>
 								Usuarios
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a className='nav-link' href='/perfil' tabIndex='-1' aria-disabled='true'>
+							<Link className='nav-link' href='/perfil'>
 								Perfil
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</form>

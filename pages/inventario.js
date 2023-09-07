@@ -1,9 +1,9 @@
 import Layout from './components/layout';
-export default function Solicitudes() {
+export default function inventario() {
 	return (
 		<>
 			<Layout>
-				<a>Solicitudes</a>
+				<a>Inventario</a>
 			</Layout>
 		</>
 	);

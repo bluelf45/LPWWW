@@ -3,7 +3,7 @@ export default function perfil() {
 	return (
 		<>
 			<Layout>
-				<a>Cringe SPM</a>
+				<a>Perfil</a>
 			</Layout>
 		</>
 	);

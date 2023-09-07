@@ -3,7 +3,7 @@ export default function usuario() {
 	return (
 		<>
 			<Layout>
-				<a>Cringe SPM</a>
+				<a>Usuarios</a>
 			</Layout>
 		</>
 	);
