@@ -1,0 +1,11 @@
+.dropdown-toggle,
+.dropdown-toggle:focus,
+.dropdown-toggle:hover {
+	color: black;
+	background-color: transparent;
+	border-color: var(--primary-color);
+}
+
+.dropdown-options:active {
+	background-color: var(--primary-color);
+}
