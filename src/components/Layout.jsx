@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import { Container } from 'react-bootstrap';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -15,8 +16,9 @@ export default function Layout({ children }) {
 				integrity='sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V'
 				crossOrigin='anonymous'
 			/>
+
 			<Navbar />
-			{children}
+			<Container fluid>{children}</Container>
 			<Footer />
 		</>
 	);
