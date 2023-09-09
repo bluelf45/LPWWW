@@ -404,15 +404,36 @@ export default function Inventario() {
 				<Col xs={12} md={2} className={styles['filter-selection']}>
 					<p className='h5'>Tipo de Producto</p>
 					<div className='d-flex flex-wrap'>
-						<label className={styles['filter-checkbox']} htmlFor='materiales'>
+						<label
+							className={`${
+								tipoProductoFilter.includes('materiales')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='materiales'
+						>
 							<input type='checkbox' id='materiales' onChange={handleChangeTipoFilter} />
 							<span>Materiales</span>
 						</label>
-						<label className={styles['filter-checkbox']} htmlFor='herramientas'>
+						<label
+							className={`${
+								tipoProductoFilter.includes('herramientas')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='herramientas'
+						>
 							<input type='checkbox' id='herramientas' onChange={handleChangeTipoFilter} />
 							<span>Herramientas</span>
 						</label>
-						<label className={styles['filter-checkbox']} htmlFor='equipos'>
+						<label
+							className={`${
+								tipoProductoFilter.includes('equipos')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='equipos'
+						>
 							<input type='checkbox' id='equipos' onChange={handleChangeTipoFilter} />
 							<span>Equipos</span>
 						</label>
@@ -420,19 +441,47 @@ export default function Inventario() {
 
 					<p className='h5 mt-3'>Estado del Producto</p>
 					<div className='d-flex flex-wrap'>
-						<label className={styles['filter-checkbox']} htmlFor='disponibles'>
+						<label
+							className={`${
+								estadoProductoFilter.includes('disponibles')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='disponibles'
+						>
 							<input type='checkbox' id='disponibles' onChange={handleCangeEstadoFilter} />
 							<span>Disponibles</span>
 						</label>
-						<label className={styles['filter-checkbox']} htmlFor='no_disponibles'>
+						<label
+							className={`${
+								estadoProductoFilter.includes('no_disponibles')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='no_disponibles'
+						>
 							<input type='checkbox' id='no_disponibles' onChange={handleCangeEstadoFilter} />
 							<span>No disponibles</span>
 						</label>
-						<label className={styles['filter-checkbox']} htmlFor='cantidad_alta'>
+						<label
+							className={`${
+								estadoProductoFilter.includes('cantidad_alta')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='cantidad_alta'
+						>
 							<input type='checkbox' id='cantidad_alta' onChange={handleCangeEstadoFilter} />
 							<span>Cantidad aceptable</span>
 						</label>
-						<label className={styles['filter-checkbox']} htmlFor='cantidad_baja'>
+						<label
+							className={`${
+								estadoProductoFilter.includes('cantidad_baja')
+									? styles['filter-checkbox-checked']
+									: styles['filter-checkbox']
+							}`}
+							htmlFor='cantidad_baja'
+						>
 							<input type='checkbox' id='cantidad_baja' onChange={handleCangeEstadoFilter} />
 							<span>Cantidad baja</span>
 						</label>

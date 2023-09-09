@@ -84,7 +84,8 @@
 	background-color: var(--alt-text-color) !important;
 }
 
-.filter-checkbox {
+.filter-checkbox,
+.filter-checkbox-checked {
 	text-decoration: none;
 	text-wrap: nowrap;
 	cursor: pointer;
@@ -101,11 +102,12 @@
 	border-color: var(--primary-color);
 }
 
-.filter-checkbox input {
+.filter-checkbox input,
+.filter-checkbox-checked input {
 	display: none;
 }
 
-.filter-checkbox:has(input:checked) {
+.filter-checkbox-checked {
 	color: white;
 	background-color: var(--alt-text-color);
 	border-color: var(--primary-color);
