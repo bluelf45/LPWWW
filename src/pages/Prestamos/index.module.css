@@ -9,3 +9,25 @@
 .dropdown-options:active {
 	background-color: var(--primary-color);
 }
+.filter-checkbox {
+	text-decoration: none;
+	text-wrap: nowrap;
+	cursor: pointer;
+	color: black;
+	padding: 0.4rem;
+	margin: 0.5rem;
+	border: 0.1rem solid var(--primary-color);
+	border-radius: 1rem;
+}
+.filter-checkbox:has(input:checked) {
+	background-color: var(--primary-color);
+	color: var(--alt-text-color);
+}
+.filter-checkbox:hover {
+	color: black;
+	background-color: var(--alt-background);
+	border-color: var(--primary-color);
+}
+.filter-checkbox input {
+	display: none;
+}

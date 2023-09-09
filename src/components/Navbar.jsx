@@ -35,6 +35,11 @@ export default function Navbar() {
 								Usuarios
 							</Link>
 						</li>
+						<li>
+							<Link className='nav-link' href='/Prestamos'>
+								Prestamos
+							</Link>
+						</li>
 					</ul>
 					<Link className='nav-link ms-auto mb-2 mb-lg-0' href='/Perfil'>
 						Perfil
