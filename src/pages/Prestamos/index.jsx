@@ -42,23 +42,29 @@ export default function Perfil() {
 		setProductosVisibles([...productosGuardados]);
 	}, [productosGuardados]);
 
-	const HandleChanges = () => {
-		const checkboxPrestamo = document.getElementById('Prestamo');
-		const checkboxDevolucion = document.getElementById('Devolucion');
-
-		if (checkboxPrestamo.checked && checkboxDevolucion.checked) {
-			setProductosVisibles([...productosGuardados]);
-		} else if (checkboxPrestamo.checked) {
-			setProductosVisibles(productosGuardados.filter((producto) => producto.Estado === 'Prestamo'));
-		} else if (checkboxDevolucion.checked) {
-			setProductosVisibles(
-				productosGuardados.filter((producto) => producto.Estado === 'Devolucion'),
-			);
+	const HandleChanges = (e) => {
+		const { id, checked } = e.target;
+		let checkboxSecondary;
+		if (id === 'Prestamo') {
+			checkboxSecondary = document.getElementById('Devolucion');
 		} else {
-			setProductosVisibles([]);
+			checkboxSecondary = document.getElementById('Prestamo');
 		}
+		const temp = [];
+		if (!checked) {
+			setProductosVisibles([...productosGuardados]);
+			return;
+		}
+		productosGuardados.forEach((producto) => {
+			if (producto.Estado === id && checked) {
+				temp.push(producto);
+			}
+			if (Boolean(checkboxSecondary.checked) && producto.Estado !== id) {
+				temp.push(producto);
+			}
+		});
+		setProductosVisibles([...temp]);
 	};
-
 	useEffect(() => {}, [ProductosVisibles]);
 	return (
 		<Layout>
