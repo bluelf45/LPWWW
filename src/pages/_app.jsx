@@ -2,8 +2,7 @@ import Script from 'next/script';
 import { useContext, useEffect } from 'react';
 import { AuthContext, AuthProvider } from '@/components/SessionContext';
 import { useRouter } from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
-import '@/pages/globals.css';
+import '@/pages/globals.scss';
 
 function MyApp({ Component, pageProps }) {
 	const { authenticated } = useContext(AuthContext);

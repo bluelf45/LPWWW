@@ -486,7 +486,7 @@ export default function Inventario() {
 							<span>Cantidad baja</span>
 						</label>
 					</div>
-					<Button onClick={handleFilter} className={`float-end mt-3 ${styles['custom-button']}`}>
+					<Button onClick={handleFilter} className={`float-end mt-3 btn-primary`}>
 						Filtrar
 					</Button>
 				</Col>
