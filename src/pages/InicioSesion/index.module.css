@@ -1,0 +1,9 @@
+.custom-button {
+	color: white;
+	background-color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+
+.custom-button:hover {
+	background-color: var(--alt-text-color);
+}

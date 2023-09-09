@@ -1,9 +1,9 @@
-import Home from './Home';
+import InicioSesion from './InicioSesion';
 
 export default function App() {
 	return (
 		<>
-			<Home />
+			<InicioSesion />
 		</>
 	);
 }
