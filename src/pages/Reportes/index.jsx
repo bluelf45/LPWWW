@@ -3,14 +3,10 @@ import { Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
-import InventarioTable from './InventarioTable';
 import ReportTableStock from './ReportTableStock';
+import ReportTableSolicitados from './ReportTableSolicitados';
 
 export default function Inventario() {
-	const [tipoProductoFilter, setTipoProductoFilter] = useState([]);
-	const [estadoProductoFilter, setEstadoProductoFilter] = useState([]);
-	const [searchQuery, setSearchQuery] = useState('');
-
 	const [productosGuardados, setProductosGuardados] = useState([
 		{
 			id: 1,
@@ -37,103 +33,62 @@ export default function Inventario() {
 			cantidad: 8,
 		},
 	]);
-	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(3);
+
+	const [productosSolicitados, setProductosSolicitados] = useState([
+		{
+			idSolicitud: 1000,
+			id: 1,
+			disponible: true,
+			categoria: 'materiales',
+			nombre: 'Plumones de pizarra',
+			detalle: 'Plumon de pizarra color rojo',
+			cantidad: 1,
+			nombrePersona: 'Juan Perez',
+			fechaSolicitud: '2021-06-01',
+		},
+		{
+			idSolicitud: 1001,
+			id: 2,
+			disponible: true,
+			categoria: 'herramientas',
+			nombre: 'Llaves Allen',
+			detalle: 'Set de llaves allen de distintos tamaños',
+			cantidad: 4,
+			nombrePersona: 'Maria Gonzalez',
+			fechaSolicitud: '2021-06-01',
+		},
+		{
+			idSolicitud: 1002,
+			id: 3,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 2,
+			nombrePersona: 'Robin Williams',
+			fechaSolicitud: '2021-06-01',
+		},
+		{
+			idSolicitud: 1003,
+			id: 3,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 3,
+			nombrePersona: 'Maria Gonzalez',
+			fechaSolicitud: '2021-06-01',
+		},
+	]);
+
 	const [productos, setProductos] = useState(productosGuardados);
 
-	const [editandoProducto, setEditandoProducto] = useState(false);
-	const [editandoCantidad, setEditandoCantidad] = useState(false);
-	const [idProductoEditar, setIdProductoEditar] = useState();
-	const [showProductoModal, setShowProductoModal] = useState(false);
-
-	const [nombreProducto, setNombreProducto] = useState('');
-	const [detalleProducto, setDetalleProducto] = useState('');
-	const [categoriaProducto, setCategoriaProducto] = useState('');
-	const [cantidadProducto, setCantidadProducto] = useState(0);
-	const [estadoProducto, setEstadoProducto] = useState(false);
-
 	const [selectedOption, setSelectedOption] = useState('');
-
-	const searchRef = useRef();
-
-	const cantidadProductoAceptable = 3;
 
 	const handleChangeTipoFilter = (e) => {
 		setSelectedOption(e.target.value);
 		console.log(e.target.value);
 	};
-
-	const filterProductos = () => {
-		const productosTipoFiltered = [];
-
-		tipoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
-				if (producto.categoria === filtro && !productosTipoFiltered.includes(producto))
-					productosTipoFiltered.push(producto);
-			});
-		});
-
-		const productosEstadoFiltered = [];
-
-		estadoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
-				let cumpleFiltro = false;
-
-				switch (filtro) {
-					case 'disponibles':
-						if (producto.disponible) cumpleFiltro = true;
-						break;
-					case 'no_disponibles':
-						if (!producto.disponible) cumpleFiltro = true;
-						break;
-					case 'cantidad_alta':
-						if (producto.cantidad >= cantidadProductoAceptable) cumpleFiltro = true;
-						break;
-					case 'cantidad_baja':
-						if (producto.cantidad < cantidadProductoAceptable) cumpleFiltro = true;
-						break;
-				}
-
-				if (cumpleFiltro && !productosEstadoFiltered.includes(producto))
-					productosEstadoFiltered.push(producto);
-			});
-		});
-
-		let productosFiltered = [];
-
-		if (tipoProductoFilter.length > 0) {
-			if (estadoProductoFilter.length > 0) {
-				productosTipoFiltered.forEach((producto) => {
-					if (productosEstadoFiltered.includes(producto)) {
-						productosFiltered.push(producto);
-					}
-				});
-			} else {
-				productosFiltered = productosTipoFiltered;
-			}
-		} else if (estadoProductoFilter.length > 0) {
-			productosFiltered = productosEstadoFiltered;
-		} else {
-			productosFiltered = productosGuardados;
-		}
-
-		if (searchQuery === '') setProductos(productosFiltered);
-		else
-			setProductos(
-				productosFiltered.filter((producto) =>
-					producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()),
-				),
-			);
-	};
-
-	const handleFilter = (e) => {
-		e.preventDefault();
-
-		filterProductos();
-	};
-
-	useEffect(() => {
-		filterProductos();
-	}, [productosGuardados, searchQuery]);
 
 	return (
 		<Layout>
@@ -219,9 +174,6 @@ export default function Inventario() {
 							<span>Objetos mas perdidos</span>
 						</label>
 					</div>
-					<Button onClick={handleFilter} className={`float-end mt-3 ${styles['custom-button']}`}>
-						Filtrar
-					</Button>
 				</Col>
 				<Col xs={12} md={10}>
 					{(() => {
@@ -229,7 +181,7 @@ export default function Inventario() {
 							case 'stock':
 								return <ReportTableStock productos={productos} />;
 							case 'solicitados':
-								return <p>Reporte de mas solicitados</p>;
+								return <ReportTableSolicitados solicitudes={productosSolicitados} />;
 							case 'devoluciones':
 								return <p>Reporte de devoluciones atrasadas</p>;
 							case 'perdidos':
