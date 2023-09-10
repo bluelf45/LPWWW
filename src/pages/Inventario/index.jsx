@@ -69,49 +69,6 @@ export default function Inventario() {
 
 	const cantidadProductoAceptable = 3;
 
-	// Formatea que mostrar como indices en la paginacion
-	const updatePaginaActiva = (paginaActiva, cantidadPaginas, maxItems) => {
-		const items = [];
-
-		if (cantidadPaginas > maxItems && paginaActiva > maxItems / 2 + 1) {
-			items.push(0);
-
-			let start;
-
-			if (paginaActiva < cantidadPaginas - maxItems / 2) {
-				start = paginaActiva - (maxItems - 3) / 2;
-			} else {
-				start = paginaActiva - (maxItems - (cantidadPaginas - paginaActiva + 2));
-			}
-
-			for (let i = start; i < paginaActiva; i++) items.push(i);
-		} else {
-			for (let i = 1; i < paginaActiva; i++) items.push(i);
-		}
-
-		items.push(paginaActiva);
-
-		if (cantidadPaginas > paginaActiva) {
-			if (cantidadPaginas > maxItems && paginaActiva < cantidadPaginas - maxItems / 2) {
-				let end;
-
-				if (paginaActiva > maxItems / 2 + 1) {
-					end = paginaActiva + (maxItems - 3) / 2;
-				} else {
-					end = paginaActiva + (maxItems - paginaActiva - 1);
-				}
-
-				for (let i = paginaActiva + 1; i <= end; i++) items.push(i);
-
-				items.push(-1);
-			} else {
-				for (let i = paginaActiva + 1; i <= cantidadPaginas; i++) items.push(i);
-			}
-		}
-
-		setPaginacionParams((prev) => ({ ...prev, indexPaginas: items, paginaActiva }));
-	};
-
 	const filterProductos = () => {
 		const productosTipoFiltered = [];
 
@@ -324,12 +281,6 @@ export default function Inventario() {
 			...prev,
 			cantidadPaginas,
 		}));
-
-		updatePaginaActiva(
-			paginacionParams.paginaActiva,
-			cantidadPaginas,
-			paginacionParams.maxCantidadPaginas,
-		);
 
 		setProductosPorPagina(
 			productosGuardados.slice(
@@ -584,8 +535,9 @@ export default function Inventario() {
 				<Col xs={12} md={10}>
 					<InventarioTable
 						productos={productos}
+						productosGuardados={productosGuardados}
 						paginacionParams={paginacionParams}
-						updatePaginaActiva={updatePaginaActiva}
+						setPaginacionParams={setPaginacionParams}
 						editandoCantidad={editandoCantidad}
 						setEditandoCantidad={setEditandoCantidad}
 						cantidadProducto={cantidadProducto}

@@ -13,10 +13,9 @@ import styles from './index.module.css';
 
 export default function InventarioTable({
 	productos,
-	setProductosPorPagina,
+	productosGuardados,
 	paginacionParams,
 	setPaginacionParams,
-	updatePaginaActiva,
 	editandoCantidad,
 	setEditandoCantidad,
 	cantidadProducto,
@@ -28,15 +27,68 @@ export default function InventarioTable({
 }) {
 	const [idProductoEditarCantidad, setIdProductoEditarCantidad] = useState();
 
+	// Formatea que mostrar como indices en la paginacion
+	const updatePaginacion = (paginaActiva, cantidadPaginas, maxItems) => {
+		const items = [];
+
+		if (cantidadPaginas > maxItems && paginaActiva > maxItems / 2 + 1) {
+			items.push(0);
+
+			let start;
+
+			if (paginaActiva < cantidadPaginas - maxItems / 2) {
+				start = paginaActiva - (maxItems - 3) / 2;
+			} else {
+				start = paginaActiva - (maxItems - (cantidadPaginas - paginaActiva + 2));
+			}
+
+			for (let i = start; i < paginaActiva; i++) items.push(i);
+		} else {
+			for (let i = 1; i < paginaActiva; i++) items.push(i);
+		}
+
+		items.push(paginaActiva);
+
+		if (cantidadPaginas > paginaActiva) {
+			if (cantidadPaginas > maxItems && paginaActiva < cantidadPaginas - maxItems / 2) {
+				let end;
+
+				if (paginaActiva > maxItems / 2 + 1) {
+					end = paginaActiva + (maxItems - 3) / 2;
+				} else {
+					end = paginaActiva + (maxItems - paginaActiva - 1);
+				}
+
+				for (let i = paginaActiva + 1; i <= end; i++) items.push(i);
+
+				items.push(-1);
+			} else {
+				for (let i = paginaActiva + 1; i <= cantidadPaginas; i++) items.push(i);
+			}
+		}
+
+		setPaginacionParams((prev) => ({ ...prev, indexPaginas: items, paginaActiva }));
+	};
+
 	const handleCambioPagina = (numeroPagina) => {
-		updatePaginaActiva(
+		updatePaginacion(
 			numeroPagina,
 			paginacionParams.cantidadPaginas,
 			paginacionParams.maxCantidadPaginas,
 		);
 	};
 
-	useEffect(() => {}, [paginacionParams.cantidadPaginas]);
+	useEffect(() => {
+		const cantidadPaginas = Math.ceil(
+			productosGuardados.length / paginacionParams.elementosPorPagina,
+		);
+
+		updatePaginacion(
+			paginacionParams.paginaActiva,
+			cantidadPaginas,
+			paginacionParams.maxCantidadPaginas,
+		);
+	}, [productosGuardados]);
 
 	return (
 		<>
