@@ -44,6 +44,7 @@
 	color: white;
 	background-color: var(--primary-color);
 	border-color: var(--alt-text-color);
+	margin-left: auto;
 }
 
 .custom-button:hover {
