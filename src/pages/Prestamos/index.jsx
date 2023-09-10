@@ -1,10 +1,21 @@
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
 import Col from 'react-bootstrap/Col';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import PrestamosTabla from './PrestamosTabla';
+import PrestamosTablaAdmin from './PrestamosTablaAdmin';
+import { AuthContext } from '@/components/SessionContext';
+import Conditional from '@/components/conditional';
 
 export default function Perfil() {
+	const { tipoUsuario } = useContext(AuthContext);
+	const ViewDefiner = {
+		panolero: 0,
+		coordinador: 1,
+		jefeCarrera: 2,
+		alumno: 3,
+		docente: 4,
+	};
 	const [productosGuardados] = useState([
 		{
 			id: 1,
@@ -68,6 +79,7 @@ export default function Perfil() {
 	useEffect(() => {}, [ProductosVisibles]);
 	return (
 		<Layout>
+			<h1 className='h1'>{tipoUsuario}</h1>
 			<Col sm md>
 				<h1 style={{ color: 'var(--alt-text-color)' }}>Prestamos y Devoluciones</h1>
 			</Col>
@@ -83,7 +95,11 @@ export default function Perfil() {
 				</label>
 			</Col>
 			<div className='row'>
-				<PrestamosTabla productos={ProductosVisibles} />
+				<Conditional
+					condition={ViewDefiner[tipoUsuario] > 2}
+					children1={<PrestamosTabla productos={ProductosVisibles} />}
+					children2={<PrestamosTablaAdmin productos={ProductosVisibles} />}
+				/>
 			</div>
 		</Layout>
 	);

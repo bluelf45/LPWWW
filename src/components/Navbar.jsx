@@ -52,7 +52,7 @@ export default function Navbar() {
 						</li>
 						<li>
 							<Link className='nav-link' href='/Prestamos'>
-								Reportes
+								Prestamos
 							</Link>
 						</li>
 					</ul>

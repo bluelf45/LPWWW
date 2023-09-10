@@ -2,7 +2,7 @@ import { Table } from 'react-bootstrap';
 import { FaImage } from 'react-icons/fa6';
 import styles from './index.module.css';
 
-export default function PrestamosTabla({ productos, productosOcultos }) {
+export default function PrestamosTablaAdmin({ productos, productosOcultos }) {
 	return (
 		<Table hover responsive className={`mt-3 mx-auto ${styles['inventario-table']}`}>
 			<thead>
