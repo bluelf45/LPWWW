@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&display=swap');
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+$primary-color: #7d3cff;
+$alt-text-color: #42366d;
+
+:root {
+	--primary-color: #7d3cff;
+	--alt-text-color: #42366d;
+	--alt-background: #fceed1;
+	--yellow: #f2d53c;
+	--red: #c80e13;
+}
+
+body {
+	font-family: 'Work Sans', sans-serif !important;
+}
+
+$theme-colors: (
+	'primary': $primary-color,
+	'info': $alt-text-color,
+);
+
+.btn-primary {
+	color: white;
+	background-color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+
+.btn-primary:hover,
+.btn-primary:target {
+	background-color: var(--alt-text-color);
+}

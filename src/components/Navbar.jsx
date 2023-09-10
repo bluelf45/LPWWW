@@ -1,13 +1,23 @@
-import 'bootstrap/dist/css/bootstrap.css';
+import { useContext } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { AuthContext } from '@/components/SessionContext';
 
 export default function Navbar() {
+	const { setAuthenticated } = useContext(AuthContext);
+	const router = useRouter();
+
+	const handleCerrarSesion = () => {
+		setAuthenticated(false);
+		router.push('/');
+	};
+
 	return (
 		<nav className='navbar navbar-expand-lg navbar-light bg-light'>
 			<div className='container-fluid'>
-				<a className='navbar-brand' href='/'>
+				<Link className='navbar-brand' href='/Home'>
 					Navbar
-				</a>
+				</Link>
 				<button
 					className='navbar-toggler'
 					type='button'
@@ -36,14 +46,28 @@ export default function Navbar() {
 							</Link>
 						</li>
 						<li>
+							<Link className='nav-link' href='/Reportes'>
+								Reportes
+							</Link>
+						</li>
+						<li>
 							<Link className='nav-link' href='/Prestamos'>
-								Prestamos
+								Reportes
 							</Link>
 						</li>
 					</ul>
-					<Link className='nav-link ms-auto mb-2 mb-lg-0' href='/Perfil'>
-						Perfil
-					</Link>
+					<ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
+						<li className='nav-item'>
+							<Link className='nav-link' href='/Perfil'>
+								Perfil
+							</Link>
+						</li>
+						<li className='nav-item'>
+							<a className='nav-link' style={{ cursor: 'pointer' }} onClick={handleCerrarSesion}>
+								Cerrar Sesión
+							</a>
+						</li>
+					</ul>
 				</form>
 			</div>
 		</nav>

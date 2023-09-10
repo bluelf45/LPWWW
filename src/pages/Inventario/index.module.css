@@ -40,16 +40,6 @@
 	color: var(--alt-text-color);
 }
 
-.custom-button {
-	color: white;
-	background-color: var(--primary-color);
-	border-color: var(--alt-text-color);
-}
-
-.custom-button:hover {
-	background-color: var(--alt-text-color);
-}
-
 .form-categoria-dropdown,
 .form-categoria-dropdown:focus,
 .form-categoria-dropdown:hover {
@@ -70,18 +60,6 @@
 .form-categoria-dropdown option:hover {
 	background-color: var(--primary-color);
 	color: var(--alt-text-color);
-}
-
-.submit-button,
-.submit-button:hover {
-	background-color: var(--primary-color);
-	border-color: var(--alt-text-color);
-	color: white;
-}
-
-.submit-button:focus,
-.submit-button:target {
-	background-color: var(--alt-text-color) !important;
 }
 
 .filter-checkbox,
@@ -116,6 +94,7 @@
 .inventario-table {
 	max-width: 95%;
 	max-height: 100%;
+	overflow: hidden;
 }
 
 .table-head th {

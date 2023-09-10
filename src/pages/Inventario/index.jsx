@@ -36,8 +36,23 @@ export default function Inventario() {
 			cantidad: 8,
 		},
 	]);
+
+	const [paginacionParams, setPaginacionParams] = useState(() => {
+		const elementosPorPagina = 7;
+		return {
+			cantidadPaginas: Math.ceil(productosGuardados.length / elementosPorPagina),
+			maxCantidadPaginas: 7, // procurar que siempre sea un numero impar
+			elementosPorPagina,
+			paginaActiva: 1,
+			indexPaginas: [],
+		};
+	});
+	const [productosPorPagina, setProductosPorPagina] = useState(
+		productosGuardados.slice(paginacionParams.limite),
+	);
+
 	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(3);
-	const [productos, setProductos] = useState(productosGuardados);
+	const [productos, setProductos] = useState(productosPorPagina);
 
 	const [editandoProducto, setEditandoProducto] = useState(false);
 	const [editandoCantidad, setEditandoCantidad] = useState(false);
@@ -54,43 +69,11 @@ export default function Inventario() {
 
 	const cantidadProductoAceptable = 3;
 
-	const handleChangeTipoFilter = (e) => {
-		const { id, checked } = e.target;
-
-		if (checked) {
-			setTipoProductoFilter((prev) => {
-				return [...prev, id];
-			});
-		} else {
-			setTipoProductoFilter((prev) => {
-				return prev.filter((item) => {
-					return id !== item;
-				});
-			});
-		}
-	};
-
-	const handleCangeEstadoFilter = (e) => {
-		const { id, checked } = e.target;
-
-		if (checked) {
-			setEstadoProductoFilter((prev) => {
-				return [...prev, id];
-			});
-		} else {
-			setEstadoProductoFilter((prev) => {
-				return prev.filter((item) => {
-					return id !== item;
-				});
-			});
-		}
-	};
-
 	const filterProductos = () => {
 		const productosTipoFiltered = [];
 
 		tipoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
+			productosPorPagina.forEach((producto) => {
 				if (producto.categoria === filtro && !productosTipoFiltered.includes(producto))
 					productosTipoFiltered.push(producto);
 			});
@@ -99,7 +82,7 @@ export default function Inventario() {
 		const productosEstadoFiltered = [];
 
 		estadoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
+			productosPorPagina.forEach((producto) => {
 				let cumpleFiltro = false;
 
 				switch (filtro) {
@@ -137,7 +120,7 @@ export default function Inventario() {
 		} else if (estadoProductoFilter.length > 0) {
 			productosFiltered = productosEstadoFiltered;
 		} else {
-			productosFiltered = productosGuardados;
+			productosFiltered = productosPorPagina;
 		}
 
 		if (searchQuery === '') setProductos(productosFiltered);
@@ -147,6 +130,38 @@ export default function Inventario() {
 					producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()),
 				),
 			);
+	};
+
+	const handleChangeTipoFilter = (e) => {
+		const { id, checked } = e.target;
+
+		if (checked) {
+			setTipoProductoFilter((prev) => {
+				return [...prev, id];
+			});
+		} else {
+			setTipoProductoFilter((prev) => {
+				return prev.filter((item) => {
+					return id !== item;
+				});
+			});
+		}
+	};
+
+	const handleChangeEstadoFilter = (e) => {
+		const { id, checked } = e.target;
+
+		if (checked) {
+			setEstadoProductoFilter((prev) => {
+				return [...prev, id];
+			});
+		} else {
+			setEstadoProductoFilter((prev) => {
+				return prev.filter((item) => {
+					return id !== item;
+				});
+			});
+		}
 	};
 
 	const handleFilter = (e) => {
@@ -191,7 +206,7 @@ export default function Inventario() {
 	const handleUpdateEstado = (e, idProducto) => {
 		e.preventDefault();
 
-		const productosNuevo = productosGuardados.map((producto) => {
+		const productosNuevo = productosPorPagina.map((producto) => {
 			if (producto.id === idProducto) {
 				return { ...producto, disponible: !producto.disponible };
 			} else {
@@ -205,7 +220,7 @@ export default function Inventario() {
 	const handleUpdateCantidad = (e, idProducto) => {
 		e.preventDefault();
 
-		const productosNuevo = productosGuardados.map((producto) => {
+		const productosNuevo = productosPorPagina.map((producto) => {
 			if (producto.id === idProducto) {
 				return { ...producto, cantidad: cantidadProducto };
 			} else {
@@ -245,7 +260,7 @@ export default function Inventario() {
 			disponible: estadoProducto,
 		};
 
-		const productosNuevo = productosGuardados.map((producto) => {
+		const productosNuevo = productosPorPagina.map((producto) => {
 			if (producto.id === idProducto) {
 				return nuevoProducto;
 			} else {
@@ -258,8 +273,35 @@ export default function Inventario() {
 	};
 
 	useEffect(() => {
+		const cantidadPaginas = Math.ceil(
+			productosGuardados.length / paginacionParams.elementosPorPagina,
+		);
+
+		setPaginacionParams((prev) => ({
+			...prev,
+			cantidadPaginas,
+		}));
+
+		setProductosPorPagina(
+			productosGuardados.slice(
+				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
+				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
+			),
+		);
+	}, [productosGuardados]);
+
+	useEffect(() => {
+		setProductosPorPagina(
+			productosGuardados.slice(
+				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
+				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
+			),
+		);
+	}, [paginacionParams.paginaActiva]);
+
+	useEffect(() => {
 		filterProductos();
-	}, [productosGuardados, searchQuery]);
+	}, [productosPorPagina, searchQuery]);
 
 	return (
 		<Layout>
@@ -449,7 +491,7 @@ export default function Inventario() {
 							}`}
 							htmlFor='disponibles'
 						>
-							<input type='checkbox' id='disponibles' onChange={handleCangeEstadoFilter} />
+							<input type='checkbox' id='disponibles' onChange={handleChangeEstadoFilter} />
 							<span>Disponibles</span>
 						</label>
 						<label
@@ -460,7 +502,7 @@ export default function Inventario() {
 							}`}
 							htmlFor='no_disponibles'
 						>
-							<input type='checkbox' id='no_disponibles' onChange={handleCangeEstadoFilter} />
+							<input type='checkbox' id='no_disponibles' onChange={handleChangeEstadoFilter} />
 							<span>No disponibles</span>
 						</label>
 						<label
@@ -471,7 +513,7 @@ export default function Inventario() {
 							}`}
 							htmlFor='cantidad_alta'
 						>
-							<input type='checkbox' id='cantidad_alta' onChange={handleCangeEstadoFilter} />
+							<input type='checkbox' id='cantidad_alta' onChange={handleChangeEstadoFilter} />
 							<span>Cantidad aceptable</span>
 						</label>
 						<label
@@ -482,17 +524,20 @@ export default function Inventario() {
 							}`}
 							htmlFor='cantidad_baja'
 						>
-							<input type='checkbox' id='cantidad_baja' onChange={handleCangeEstadoFilter} />
+							<input type='checkbox' id='cantidad_baja' onChange={handleChangeEstadoFilter} />
 							<span>Cantidad baja</span>
 						</label>
 					</div>
-					<Button onClick={handleFilter} className={`float-end mt-3 ${styles['custom-button']}`}>
+					<Button onClick={handleFilter} className={`float-end mt-3 btn-primary`}>
 						Filtrar
 					</Button>
 				</Col>
 				<Col xs={12} md={10}>
 					<InventarioTable
 						productos={productos}
+						productosGuardados={productosGuardados}
+						paginacionParams={paginacionParams}
+						setPaginacionParams={setPaginacionParams}
 						editandoCantidad={editandoCantidad}
 						setEditandoCantidad={setEditandoCantidad}
 						cantidadProducto={cantidadProducto}
