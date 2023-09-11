@@ -56,6 +56,7 @@ export default function Perfil() {
 	const [EstadoProducto, setEstadoProducto] = useState('');
 	const [nombreProducto, setNombreProducto] = useState('');
 	const [idProductoEditar, setIdProductoEditar] = useState();
+	const [FechaProducto, setFechaProducto] = useState(Date.now());
 	const [showProductoModal, setShowProductoModal] = useState(false);
 	const [ProductosVisibles, setProductosVisibles] = useState([...productosGuardados]);
 	useEffect(() => {
@@ -76,6 +77,8 @@ export default function Perfil() {
 			if (producto.id === idProductoEditar) {
 				producto.Estado = EstadoProducto;
 				producto.cantidad = cantidadProducto;
+				producto.nombre = nombreProducto;
+				producto.fechaPrestamo = FechaProducto;
 			}
 			temp.push(producto);
 		});
@@ -151,6 +154,17 @@ export default function Perfil() {
 								>
 									<Modal.Body>
 										<Row>
+											<Col>
+												<Form.Group controlId='duedate'>
+													<Form.Control
+														type='date'
+														name='duedate'
+														placeholder='Due date'
+														value={FechaProducto}
+														onChange={(e) => setFechaProducto(e.target.value)}
+													/>
+												</Form.Group>
+											</Col>
 											<Form.Group className='mb-3' controlId='formNombre'>
 												<Form.Label>Estado del Prestamo</Form.Label>
 												<Form.Select
