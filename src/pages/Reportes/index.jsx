@@ -184,7 +184,7 @@ export default function Inventario() {
 			<Row>
 				<Col xs={12} md={2} className={styles['filter-selection']}>
 					<p className='h5'>Escoger reporte</p>
-					<div className='d-flex flex-wrap'>
+					<div className='d-flex flex-md-column'>
 						<label
 							className={`report-checkbox ${
 								selectedOption === 'stock'
@@ -259,23 +259,29 @@ export default function Inventario() {
 						</label>
 					</div>
 					<hr></hr>
-					<label
-						className={`report-button ${
-							selectedOption === 'descargar'
-								? styles['report-button-pressed']
-								: styles['report-button']
-						}`}
-						htmlFor='descargar'
-					>
-						<input
-							type='button'
-							id='descargar'
-							name='decargar'
-							value='descargar'
-							checked={selectedOption === 'descargar'}
-						/>
-						<span>Descargar Reporte</span>
-					</label>
+					{selectedOption != '' ? (
+						
+							<label
+								className={`report-button ${
+									selectedOption === 'descargar'
+										? styles['report-button-pressed']
+										: styles['report-button']
+								}`}
+								htmlFor='descargar'
+							>
+								<input
+									type='button'
+									id='descargar'
+									name='decargar'
+									value='descargar'
+									checked={selectedOption === 'descargar'}
+								/>
+								<span>Descargar Reporte</span>
+							</label>,
+						
+					) : (
+						<div></div>
+					)}
 				</Col>
 				<Col xs={12} md={10}>
 					{(() => {

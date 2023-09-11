@@ -104,7 +104,7 @@
 
 .report-button:active {
 	color: black;
-	background-color: var(--red);
+	background-color: var(--primary-color);
 	border-color: var(--primary-color);
 }
 
