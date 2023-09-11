@@ -171,16 +171,17 @@ export default function Perfil() {
 
 			<Row>
 				<Col xs={12} md={2} className={styles['filter-selection']}>
-					{' '}
-					<p className='h5'>Filtros estado de prestamos</p>
-					<label className={styles['filter-checkbox']} htmlFor='Prestamo'>
-						<input type='checkbox' id='Prestamo' onChange={HandleChanges} />
-						<span>Prestamos</span>
-					</label>
-					<label className={styles['filter-checkbox']} htmlFor='Devolucion'>
-						<input type='checkbox' id='Devolucion' onChange={HandleChanges} />
-						<span>Devoluciones</span>
-					</label>
+					<div className='d-flex flex-column'>
+						<p className='h5'>Filtros estado de prestamos</p>
+						<label className={styles['filter-checkbox']} htmlFor='Prestamo'>
+							<input type='checkbox' id='Prestamo' onChange={HandleChanges} />
+							<span>Prestamos</span>
+						</label>
+						<label className={styles['filter-checkbox']} htmlFor='Devolucion'>
+							<input type='checkbox' id='Devolucion' onChange={HandleChanges} />
+							<span>Devoluciones</span>
+						</label>
+					</div>
 					<Button onClick={HandleCreateSolicitudModal} className={` mt-3 btn-primary`}>
 						Crear Solicitud
 					</Button>
