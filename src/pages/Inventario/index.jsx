@@ -366,7 +366,12 @@ export default function Inventario() {
 					<Form onSubmit={handleSearchBar}>
 						<Form.Group controlId='formSearchBar' style={{ display: 'inline-block' }}>
 							<Form.Label visuallyHidden='true'>Barra de búsqueda</Form.Label>
-							<Form.Control type='search' ref={searchRef} className={styles['text-form']} />
+							<Form.Control
+								type='search'
+								ref={searchRef}
+								className={styles['text-form']}
+								placeholder='Busque por nombre de producto'
+							/>
 						</Form.Group>
 						<Button variant='light' type='submit' style={{ display: 'inline-block' }}>
 							<FaMagnifyingGlass style={{ color: 'var(--alt-text-color)' }} />
