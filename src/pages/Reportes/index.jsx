@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
-import { Row, Col, Form, Button, Modal } from 'react-bootstrap';
-import { FaMagnifyingGlass } from 'react-icons/fa6';
+import { useState } from 'react';
+import { Row, Col } from 'react-bootstrap';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
 import ReportTableStock from './ReportTableStock';
 import ReportTableSolicitados from './ReportTableSolicitados';
+import ReportTableDevoluciones from './ReportTableDevoluciones';
+import ReportTablePerdidos from './ReportTablePerdidos';
 
 export default function Inventario() {
-	const [productosGuardados, setProductosGuardados] = useState([
+	const [productosGuardados] = useState([
 		{
 			id: 1,
 			disponible: true,
@@ -34,7 +35,7 @@ export default function Inventario() {
 		},
 	]);
 
-	const [productosSolicitados, setProductosSolicitados] = useState([
+	const [productosSolicitados] = useState([
 		{
 			idSolicitud: 1000,
 			id: 1,
@@ -45,6 +46,8 @@ export default function Inventario() {
 			cantidad: 1,
 			nombrePersona: 'Juan Perez',
 			fechaSolicitud: '2021-06-01',
+			fechaEntrega: '2021-06-02',
+			fechaEntregado: '2021-06-02',
 		},
 		{
 			idSolicitud: 1001,
@@ -56,6 +59,8 @@ export default function Inventario() {
 			cantidad: 4,
 			nombrePersona: 'Maria Gonzalez',
 			fechaSolicitud: '2021-06-01',
+			fechaEntrega: '2021-06-02',
+			fechaEntregado: '2021-06-04',
 		},
 		{
 			idSolicitud: 1002,
@@ -67,21 +72,60 @@ export default function Inventario() {
 			cantidad: 2,
 			nombrePersona: 'Robin Williams',
 			fechaSolicitud: '2021-06-01',
+			fechaEntrega: '2021-06-02',
+			fechaEntregado: '2021-06-02',
 		},
 		{
 			idSolicitud: 1003,
-			id: 3,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 3,
-			nombrePersona: 'Maria Gonzalez',
+			id: 2,
+			disponible: true,
+			categoria: 'herramientas',
+			nombre: 'Llaves Allen',
+			detalle: 'Set de llaves allen de distintos tamaños',
+			cantidad: 1,
+			nombrePersona: 'Roberto Robert',
 			fechaSolicitud: '2021-06-01',
+			fechaEntrega: '2021-06-02',
+			fechaEntregado: 'Perdido',
 		},
 	]);
 
-	const [productos, setProductos] = useState(productosGuardados);
+	const [solicitados] = useState(() => {
+		const idUsed = [];
+		const final = [];
+		productosSolicitados.forEach((element) => {
+			if (!idUsed.includes(element.id)) {
+				idUsed.push(element.id);
+				final.push(element);
+			} else {
+				const index = idUsed.indexOf(element.id);
+				final[index].cantidad += element.cantidad;
+			}
+		});
+		return final;
+	});
+
+	const [devoluciones] = useState(() => {
+		const final = [];
+		productosSolicitados.forEach((element) => {
+			if (element.fechaEntregado !== 'Perdido' && element.fechaEntregado > element.fechaEntrega) {
+				final.push(element);
+			}
+		});
+		return final;
+	});
+
+	const [perdidos] = useState(() => {
+		const final = [];
+		productosSolicitados.forEach((element) => {
+			if (element.fechaEntregado === 'Perdido') {
+				final.push(element);
+			}
+		});
+		return final;
+	});
+
+	const [productos] = useState(productosGuardados);
 
 	const [selectedOption, setSelectedOption] = useState('');
 
@@ -181,11 +225,11 @@ export default function Inventario() {
 							case 'stock':
 								return <ReportTableStock productos={productos} />;
 							case 'solicitados':
-								return <ReportTableSolicitados solicitudes={productosSolicitados} />;
+								return <ReportTableSolicitados solicitudes={solicitados} />;
 							case 'devoluciones':
-								return <p>Reporte de devoluciones atrasadas</p>;
+								return <ReportTableDevoluciones productos={devoluciones} />;
 							case 'perdidos':
-								return <p>Reporte de objetos mas perdidos</p>;
+								return <ReportTablePerdidos productos={perdidos} />;
 							default:
 								return <p>Seleccione un reporte</p>;
 						}
