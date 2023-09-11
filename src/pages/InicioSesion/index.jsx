@@ -13,7 +13,6 @@ export default function InicioSesion() {
 		setTipoUsuario(tipoUsuario);
 		router.push('/Home');
 	};
-
 	return (
 		<Row>
 			<Col>

@@ -16,7 +16,7 @@ export default function Navbar() {
 		<nav className='navbar navbar-expand-lg navbar-light bg-light'>
 			<div className='container-fluid'>
 				<Link className='navbar-brand' href='/Home'>
-					Navbar
+					Home
 				</Link>
 				<button
 					className='navbar-toggler'
@@ -48,6 +48,11 @@ export default function Navbar() {
 						<li>
 							<Link className='nav-link' href='/Reportes'>
 								Reportes
+							</Link>
+						</li>
+						<li>
+							<Link className='nav-link' href='/Prestamos'>
+								Prestamos
 							</Link>
 						</li>
 					</ul>
