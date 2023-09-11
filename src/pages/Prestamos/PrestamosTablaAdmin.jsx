@@ -23,34 +23,35 @@ export default function PrestamosTablaAdmin({ productos, HandleEditPrestamo }) {
 				</tr>
 			</thead>
 			<tbody>
-				{productos.map((producto) => (
-					<tr key={producto.id}>
-						<td align='center' className='align-middle'>
-							<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
-						</td>
-						<td className='align-middle'>{producto.Estado}</td>
-						<td className='align-middle'>{producto.Usuario}</td>
-						<td className='align-middle'>
-							{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
-						</td>
-						<td className='align-middle'>{producto.nombre}</td>
-						<td className='align-middle'>{producto.detalle}</td>
-						<td className='align-middle'>{producto.cantidad}</td>
-						<td className='align-middle'>{producto.fechaPrestamo}</td>
-						<td className='align-middle'>
-							<FaRegEdit
-								onClick={(e) => {
-									HandleEditPrestamo(e, producto);
-								}}
-								size='2rem'
-								style={{ color: 'var(--alt-text-color)' }}
-							/>
-						</td>
-						<td className='align-middle'>
-							<Button className='btn-primary'>Ticket</Button>
-						</td>
-					</tr>
-				))}
+				{productos &&
+					productos.map((producto) => (
+						<tr key={producto.id}>
+							<td align='center' className='align-middle'>
+								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+							</td>
+							<td className='align-middle'>{producto.Estado}</td>
+							<td className='align-middle'>{producto.Usuario}</td>
+							<td className='align-middle'>
+								{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
+							</td>
+							<td className='align-middle'>{producto.nombre}</td>
+							<td className='align-middle'>{producto.detalle}</td>
+							<td className='align-middle'>{producto.cantidad}</td>
+							<td className='align-middle'>{producto.fechaPrestamo}</td>
+							<td className='align-middle'>
+								<FaRegEdit
+									onClick={(e) => {
+										HandleEditPrestamo(e, producto);
+									}}
+									size='2rem'
+									style={{ color: 'var(--alt-text-color)' }}
+								/>
+							</td>
+							<td className='align-middle'>
+								<Button className='btn-primary'>Ticket</Button>
+							</td>
+						</tr>
+					))}
 			</tbody>
 		</Table>
 	);

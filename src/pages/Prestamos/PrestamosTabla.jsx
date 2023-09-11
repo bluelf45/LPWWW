@@ -18,21 +18,22 @@ export default function PrestamosTabla({ productos, productosOcultos }) {
 				</tr>
 			</thead>
 			<tbody>
-				{productos.map((producto) => (
-					<tr key={producto.id}>
-						<td align='center' className='align-middle'>
-							<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
-						</td>
-						<td className='align-middle'>{producto.Estado}</td>
-						<td className='align-middle'>
-							{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
-						</td>
-						<td className='align-middle'>{producto.nombre}</td>
-						<td className='align-middle'>{producto.detalle}</td>
-						<td className='align-middle'>{producto.cantidad}</td>
-						<td className='align-middle'>{producto.fechaPrestamo}</td>
-					</tr>
-				))}
+				{productos &&
+					productos.map((producto) => (
+						<tr key={producto.id}>
+							<td align='center' className='align-middle'>
+								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+							</td>
+							<td className='align-middle'>{producto.Estado}</td>
+							<td className='align-middle'>
+								{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
+							</td>
+							<td className='align-middle'>{producto.nombre}</td>
+							<td className='align-middle'>{producto.detalle}</td>
+							<td className='align-middle'>{producto.cantidad}</td>
+							<td className='align-middle'>{producto.fechaPrestamo}</td>
+						</tr>
+					))}
 			</tbody>
 		</Table>
 	);
