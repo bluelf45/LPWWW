@@ -40,18 +40,16 @@ export default function Inventario() {
 
 	const [productos, setProductos] = useState(productosGuardados);
 
-	const [paginacionParams, setPaginacionParams] = useState(() => {
-		const elementosPorPagina = 8;
-		return {
-			cantidadPaginas: Math.ceil(productosGuardados.length / elementosPorPagina),
-			maxCantidadPaginas: 7, // procurar que siempre sea un numero impar
-			elementosPorPagina,
-			paginaActiva: 1,
-			indexPaginas: [],
-		};
+	const [paginacionParams, setPaginacionParams] = useState({
+		elementosPorPagina: 8,
+		paginaActiva: 1,
 	});
+
 	const [productosPorPagina, setProductosPorPagina] = useState(
-		productos.slice(paginacionParams.limite),
+		productos.slice(
+			paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
+			paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
+		),
 	);
 
 	const [editandoProducto, setEditandoProducto] = useState(false);
@@ -79,46 +77,69 @@ export default function Inventario() {
 			});
 		});
 
-		const productosEstadoFiltered = [];
+		const productosEstadoFiltered = {};
 
 		estadoProductoFilter.forEach((filtro) => {
 			productosGuardados.forEach((producto) => {
 				let cumpleFiltro = false;
+				let key;
 
 				switch (filtro) {
-					case 'disponibles':
-						if (producto.disponible) cumpleFiltro = true;
+					case 'disponible':
+						if (producto.disponible) {
+							key = 'disponible';
+							cumpleFiltro = true;
+						}
 						break;
-					case 'no_disponibles':
-						if (!producto.disponible) cumpleFiltro = true;
+					case 'no_disponible':
+						if (!producto.disponible) {
+							key = 'disponible';
+							cumpleFiltro = true;
+						}
 						break;
 					case 'cantidad_alta':
-						if (producto.cantidad >= cantidadProductoAceptable) cumpleFiltro = true;
+						if (producto.cantidad >= cantidadProductoAceptable) {
+							key = 'cantidad';
+							cumpleFiltro = true;
+						}
 						break;
 					case 'cantidad_baja':
-						if (producto.cantidad < cantidadProductoAceptable) cumpleFiltro = true;
+						if (producto.cantidad < cantidadProductoAceptable) {
+							key = 'cantidad';
+							cumpleFiltro = true;
+						}
 						break;
 				}
 
-				if (cumpleFiltro && !productosEstadoFiltered.includes(producto))
-					productosEstadoFiltered.push(producto);
+				if (cumpleFiltro) {
+					if (productosEstadoFiltered[key] === undefined) productosEstadoFiltered[key] = [];
+
+					if (!productosEstadoFiltered[key].includes(producto))
+						productosEstadoFiltered[key].push(producto);
+				}
 			});
 		});
 
 		let productosFiltered = [];
 
 		if (tipoProductoFilter.length > 0) {
+			productosFiltered = productosTipoFiltered;
 			if (estadoProductoFilter.length > 0) {
-				productosTipoFiltered.forEach((producto) => {
-					if (productosEstadoFiltered.includes(producto)) {
-						productosFiltered.push(producto);
-					}
-				});
-			} else {
-				productosFiltered = productosTipoFiltered;
+				for (const key in productosEstadoFiltered) {
+					productosFiltered = productosFiltered.filter(
+						(usuario) => productosEstadoFiltered[key].indexOf(usuario) !== -1,
+					);
+				}
 			}
 		} else if (estadoProductoFilter.length > 0) {
-			productosFiltered = productosEstadoFiltered;
+			for (const key in productosEstadoFiltered) {
+				if (productosFiltered.length === 0) productosFiltered = productosEstadoFiltered[key];
+				else {
+					productosFiltered = productosFiltered.filter(
+						(usuario) => productosEstadoFiltered[key].indexOf(usuario) !== -1,
+					);
+				}
+			}
 		} else {
 			productosFiltered = productosGuardados;
 		}
@@ -275,20 +296,13 @@ export default function Inventario() {
 	};
 
 	useEffect(() => {
-		const cantidadPaginas = Math.ceil(productos.length / paginacionParams.elementosPorPagina);
-
-		setPaginacionParams((prev) => ({
-			...prev,
-			cantidadPaginas,
-		}));
-
 		setProductosPorPagina(
 			productos.slice(
 				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
 				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
 			),
 		);
-	}, [productosGuardados, productos]);
+	}, [productos]);
 
 	useEffect(() => {
 		setProductosPorPagina(
@@ -455,7 +469,7 @@ export default function Inventario() {
 			<Row>
 				<Col xs={12} md={2} className={styles['filter-selection']}>
 					<p className='h5'>Tipo de Producto</p>
-					<div className='d-flex flex-wrap'>
+					<div className='d-flex flex-column'>
 						<label
 							className={`${
 								tipoProductoFilter.includes('materiales')
@@ -492,28 +506,28 @@ export default function Inventario() {
 					</div>
 
 					<p className='h5 mt-3'>Estado del Producto</p>
-					<div className='d-flex flex-wrap'>
+					<div className='d-flex flex-column'>
 						<label
 							className={`${
-								estadoProductoFilter.includes('disponibles')
+								estadoProductoFilter.includes('disponible')
 									? styles['filter-checkbox-checked']
 									: styles['filter-checkbox']
 							}`}
-							htmlFor='disponibles'
+							htmlFor='disponible'
 						>
-							<input type='checkbox' id='disponibles' onChange={handleChangeEstadoFilter} />
-							<span>Disponibles</span>
+							<input type='checkbox' id='disponible' onChange={handleChangeEstadoFilter} />
+							<span>Disponible</span>
 						</label>
 						<label
 							className={`${
-								estadoProductoFilter.includes('no_disponibles')
+								estadoProductoFilter.includes('no_disponible')
 									? styles['filter-checkbox-checked']
 									: styles['filter-checkbox']
 							}`}
-							htmlFor='no_disponibles'
+							htmlFor='no_disponible'
 						>
-							<input type='checkbox' id='no_disponibles' onChange={handleChangeEstadoFilter} />
-							<span>No disponibles</span>
+							<input type='checkbox' id='no_disponible' onChange={handleChangeEstadoFilter} />
+							<span>No disponible</span>
 						</label>
 						<label
 							className={`${
@@ -544,8 +558,8 @@ export default function Inventario() {
 				</Col>
 				<Col xs={12} md={10}>
 					<InventarioTable
-						productosPorPagina={productosPorPagina}
 						productos={productos}
+						productosPorPagina={productosPorPagina}
 						paginacionParams={paginacionParams}
 						setPaginacionParams={setPaginacionParams}
 						editandoCantidad={editandoCantidad}

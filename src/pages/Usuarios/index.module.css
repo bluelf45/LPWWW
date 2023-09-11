@@ -1,0 +1,58 @@
+.text-form {
+	border-color: var(--primary-color);
+	width: 20rem;
+	min-width: 14rem;
+	color: var(--alt-text-color);
+}
+
+.text-form:focus {
+	border-color: var(--primary-color);
+	box-shadow: 0.1rem 0.1rem 0.1rem var(--primary-color);
+	color: var(--alt-text-color);
+}
+
+.usuarios-table {
+	max-width: 95%;
+	max-height: 100%;
+	overflow: hidden;
+}
+
+.table-head th {
+	color: var(--alt-text-color);
+}
+
+.filter-checkbox,
+.filter-checkbox-checked {
+	text-decoration: none;
+	text-wrap: nowrap;
+	cursor: pointer;
+	color: black;
+	padding: 0.4rem;
+	margin: 0.5rem;
+	border: 0.1rem solid var(--primary-color);
+	border-radius: 1rem;
+}
+
+.filter-checkbox:hover {
+	color: black;
+	background-color: var(--alt-background);
+	border-color: var(--primary-color);
+}
+
+.filter-checkbox input,
+.filter-checkbox-checked input {
+	display: none;
+}
+
+.filter-checkbox-checked {
+	color: white;
+	background-color: var(--alt-text-color);
+	border-color: var(--primary-color);
+}
+
+@media (min-width: 768px) {
+	.filter-selection {
+		border-right: 0.1rem solid var(--alt-text-color);
+		height: 100%;
+	}
+}

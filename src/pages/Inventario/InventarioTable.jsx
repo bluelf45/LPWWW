@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Row, Col, Form, Table, Pagination } from 'react-bootstrap';
+import { useState } from 'react';
+import { Row, Col, Form, Table } from 'react-bootstrap';
+import { PaginationControl } from 'react-bootstrap-pagination-control';
 import {
 	FaImage,
 	FaPen,
@@ -12,8 +13,8 @@ import {
 import styles from './index.module.css';
 
 export default function InventarioTable({
-	productosPorPagina,
 	productos,
+	productosPorPagina,
 	paginacionParams,
 	setPaginacionParams,
 	editandoCantidad,
@@ -28,67 +29,6 @@ export default function InventarioTable({
 	const [idProductoEditarCantidad, setIdProductoEditarCantidad] = useState();
 	const [itemHoveringAlert, setItemHoveringAlert] = useState('');
 	const [itemHoveringEditar, setItemHoveringEditar] = useState('');
-
-	// Formatea que mostrar como indices en la paginacion
-	const updatePaginacion = (paginaActiva, cantidadPaginas, maxItems) => {
-		const items = [];
-
-		if (cantidadPaginas > maxItems && paginaActiva > maxItems / 2 + 1) {
-			items.push(0);
-
-			let start;
-
-			if (paginaActiva < cantidadPaginas - maxItems / 2) {
-				start = paginaActiva - (maxItems - 3) / 2;
-			} else {
-				start = paginaActiva - (maxItems - (cantidadPaginas - paginaActiva + 2));
-			}
-
-			for (let i = start; i < paginaActiva; i++) items.push(i);
-		} else {
-			for (let i = 1; i < paginaActiva; i++) items.push(i);
-		}
-
-		items.push(paginaActiva);
-
-		if (cantidadPaginas > paginaActiva) {
-			if (cantidadPaginas > maxItems && paginaActiva < cantidadPaginas - maxItems / 2) {
-				let end;
-
-				if (paginaActiva > maxItems / 2 + 1) {
-					end = paginaActiva + (maxItems - 3) / 2;
-				} else {
-					end = paginaActiva + (maxItems - paginaActiva - 1);
-				}
-
-				for (let i = paginaActiva + 1; i <= end; i++) items.push(i);
-
-				items.push(-1);
-			} else {
-				for (let i = paginaActiva + 1; i <= cantidadPaginas; i++) items.push(i);
-			}
-		}
-
-		setPaginacionParams((prev) => ({ ...prev, indexPaginas: items, paginaActiva }));
-	};
-
-	const handleCambioPagina = (numeroPagina) => {
-		updatePaginacion(
-			numeroPagina,
-			paginacionParams.cantidadPaginas,
-			paginacionParams.maxCantidadPaginas,
-		);
-	};
-
-	useEffect(() => {
-		const cantidadPaginas = Math.ceil(productos.length / paginacionParams.elementosPorPagina);
-
-		updatePaginacion(
-			paginacionParams.paginaActiva,
-			cantidadPaginas,
-			paginacionParams.maxCantidadPaginas,
-		);
-	}, [productos]);
 
 	return (
 		<>
@@ -266,46 +206,16 @@ export default function InventarioTable({
 				</tbody>
 			</Table>
 
-			<Pagination>
-				<Pagination.First
-					onClick={() => {
-						handleCambioPagina(1);
-					}}
-				/>
-				<Pagination.Prev
-					onClick={() => {
-						if (paginacionParams.paginaActiva > 1)
-							handleCambioPagina(paginacionParams.paginaActiva - 1);
-					}}
-				/>
-				{paginacionParams &&
-					paginacionParams.indexPaginas &&
-					paginacionParams.indexPaginas.map((index) => {
-						if (index === 0 || index === -1) {
-							return <Pagination.Ellipsis key={index} />;
-						}
-						return (
-							<Pagination.Item
-								onClick={() => handleCambioPagina(index)}
-								key={index}
-								active={index === paginacionParams.paginaActiva}
-							>
-								{index}
-							</Pagination.Item>
-						);
-					})}
-				<Pagination.Next
-					onClick={() => {
-						if (paginacionParams.paginaActiva < paginacionParams.cantidadPaginas)
-							handleCambioPagina(paginacionParams.paginaActiva + 1);
-					}}
-				/>
-				<Pagination.Last
-					onClick={() => {
-						handleCambioPagina(paginacionParams.cantidadPaginas);
-					}}
-				/>
-			</Pagination>
+			<PaginationControl
+				page={paginacionParams.paginaActiva}
+				between={4}
+				total={productos.length}
+				limit={paginacionParams.elementosPorPagina}
+				changePage={(page) => {
+					setPaginacionParams((prev) => ({ ...prev, paginaActiva: page }));
+				}}
+				ellipsis={4}
+			/>
 		</>
 	);
 }
