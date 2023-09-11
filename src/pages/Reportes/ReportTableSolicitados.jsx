@@ -51,6 +51,7 @@ export default function ReportTableSolicitados({ solicitudes }) {
 				between={4}
 				total={currentPageData.length}
 				limit={5}
+				className={styles.paginacion}
 				changePage={(page) => {
 					SetPage(page);
 				}}

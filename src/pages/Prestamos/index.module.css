@@ -9,7 +9,12 @@
 	min-width: 18rem;
 	color: var(--alt-text-color);
 }
-
+.btn-custom {
+	background-color: var(--primary-color) !important;
+	border-color: var(--alt-text-color) !important;
+	color: white !important;
+	margin-top: 3;
+}
 .estado-dropdown-toggle,
 .estado-dropdown-toggle:focus,
 .estado-dropdown-toggle:hover {
@@ -114,57 +119,12 @@
 	border-color: var(--primary-color);
 }
 
-.inventario-table {
-	max-width: 95%;
-	max-height: 100%;
-}
-
 .table-head th {
 	color: var(--alt-text-color);
 }
 
 .alert-cantidad {
 	position: relative;
-}
-
-.alert-cantidad p {
-	background-color: var(--alt-background);
-	width: 10rem;
-	padding: 0.8rem;
-	border-radius: 0.8rem;
-	text-decoration: none;
-	display: none;
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-
-.alert-cantidad:hover p {
-	display: block;
-}
-
-.producto-accion-dropdown {
-	position: relative;
-}
-.btn-primary {
-	background-color: var(--primary-color);
-	border-color: var(--alt-text-color);
-	color: white;
-}
-.producto-accion-opciones {
-	text-wrap: nowrap;
-	background-color: var(--alt-background);
-	padding: 0.8rem;
-	border-radius: 0.8rem;
-	text-decoration: none;
-	display: none;
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-
-.producto-accion-dropdown:hover .producto-accion-opciones {
-	display: block;
 }
 
 @media (min-width: 768px) {

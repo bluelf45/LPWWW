@@ -55,7 +55,7 @@ export default function PrestamosTablaAdmin({ productos, HandleEditPrestamo }) {
 								/>
 							</td>
 							<td className='align-middle'>
-								<Button className='btn-primary'>Ticket</Button>
+								<Button className='btn-custom'>Ticket</Button>
 							</td>
 						</tr>
 					))}
