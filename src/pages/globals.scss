@@ -29,5 +29,45 @@ $theme-colors: (
 
 .btn-primary:hover,
 .btn-primary:target {
+	background-color: white;
+}
+.page-link {
+	color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+.page-link {
+	color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-link:hover {
+	color: var(--alt-text-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-item.active .page-link {
+	color: var(--alt-background);
+	background-color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-item.active .page-link:hover {
+	color: var(--alt-background);
 	background-color: var(--alt-text-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-item.disabled .page-link {
+	color: var(--alt-text-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-item .page-link {
+	color: var(--primary-color);
+	border-color: var(--alt-text-color);
+}
+
+.page-item .page-link:hover {
+	color: var(--alt-text-color);
+	border-color: var(--alt-text-color);
 }
