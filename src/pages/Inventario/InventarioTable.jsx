@@ -12,8 +12,8 @@ import {
 import styles from './index.module.css';
 
 export default function InventarioTable({
+	productosPorPagina,
 	productos,
-	productosGuardados,
 	paginacionParams,
 	setPaginacionParams,
 	editandoCantidad,
@@ -26,6 +26,8 @@ export default function InventarioTable({
 	cantidadProductoAceptable,
 }) {
 	const [idProductoEditarCantidad, setIdProductoEditarCantidad] = useState();
+	const [itemHoveringAlert, setItemHoveringAlert] = useState('');
+	const [itemHoveringEditar, setItemHoveringEditar] = useState('');
 
 	// Formatea que mostrar como indices en la paginacion
 	const updatePaginacion = (paginaActiva, cantidadPaginas, maxItems) => {
@@ -79,162 +81,182 @@ export default function InventarioTable({
 	};
 
 	useEffect(() => {
-		const cantidadPaginas = Math.ceil(
-			productosGuardados.length / paginacionParams.elementosPorPagina,
-		);
+		const cantidadPaginas = Math.ceil(productos.length / paginacionParams.elementosPorPagina);
 
 		updatePaginacion(
 			paginacionParams.paginaActiva,
 			cantidadPaginas,
 			paginacionParams.maxCantidadPaginas,
 		);
-	}, [productosGuardados]);
+	}, [productos]);
 
 	return (
 		<>
-			<Table hover responsive className={`mt-3 mx-auto ${styles['inventario-table']}`}>
+			<Table responsive className={`mt-3 mx-auto ${styles['inventario-table']}`}>
 				<thead>
 					<tr className={styles['table-head']}>
-						<th />
-						<th>ID</th>
-						<th>Categoría</th>
-						<th>Nombre</th>
-						<th>Detalle</th>
-						<th>Cantidad</th>
-						<th>Disponible</th>
+						<th style={{ width: '4rem' }} />
+						<th style={{ width: '3rem' }}>ID</th>
+						<th style={{ width: '9%' }}>Categoría</th>
+						<th style={{ width: '18%' }}>Nombre</th>
+						<th style={{ width: '40%' }}>Detalle</th>
+						<th style={{ width: '10%' }}>Cantidad</th>
+						<th style={{ width: '5%' }}>Disponible</th>
 						<th />
 					</tr>
 				</thead>
 				<tbody>
-					{productos.map((producto) => (
-						<tr key={producto.id}>
-							<td align='center' className='align-middle'>
-								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
-							</td>
-							<td className='align-middle'>{producto.id}</td>
-							<td className='align-middle'>
-								{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
-							</td>
-							<td className='align-middle'>{producto.nombre}</td>
-							<td className='align-middle'>{producto.detalle}</td>
-							<td className='align-middle'>
-								<Row className='align-items-center'>
-									{editandoCantidad && (
-										<>
-											{idProductoEditarCantidad === producto.id && (
-												<>
-													<Col>
-														<Form.Control
-															type='number'
-															value={cantidadProducto}
-															onChange={(e) => {
-																setCantidadProducto(e.target.value);
-															}}
-														/>
-													</Col>
-													<Col className='align-middle'>
-														<a
-															onClick={(e) => {
-																e.preventDefault();
-																setEditandoCantidad(false);
-															}}
-														>
-															<FaCircleXmark
-																size='1.5rem'
-																style={{ color: 'var(--red)', cursor: 'pointer' }}
-															/>
-														</a>
-														<a
-															onClick={(e) => {
-																handleUpdateCantidad(e, producto.id);
-															}}
-														>
-															<FaCircleCheck
-																size='1.5rem'
-																style={{ color: 'green', marginLeft: '1rem', cursor: 'pointer' }}
-															/>
-														</a>
-													</Col>
-
-													<Col></Col>
-												</>
-											)}
-											{idProductoEditarCantidad !== producto.id && (
-												<>
-													<Col>{producto.id}</Col>
-													<Col>
-														<FaPen style={{ color: 'lightslategrey' }} />
-													</Col>
-													<Col>
-														{producto.cantidad < cantidadProductoAceptable && (
-															<>
-																<div className={styles['alert-cantidad']}>
-																	<FaCircleInfo style={{ color: 'var(--red)' }} />
-																	<p>La cantidad de este producto es muy baja.</p>
-																</div>
-															</>
-														)}
-													</Col>
-												</>
-											)}
-										</>
-									)}
-									{!editandoCantidad && (
-										<>
-											<Col>{producto.cantidad}</Col>
-											<Col>
-												<a
-													onClick={() => {
-														setEditandoCantidad(true);
-														setIdProductoEditarCantidad(producto.id);
-														setCantidadProducto(producto.cantidad);
-													}}
-													style={{ cursor: 'pointer' }}
-												>
-													<FaPen style={{ color: 'var(--alt-text-color)' }} />
-												</a>
-											</Col>
-											<Col>
-												{producto.cantidad < cantidadProductoAceptable && (
+					{productosPorPagina.map((producto) => (
+						<>
+							<tr key={producto.id}>
+								<td align='center' className='align-middle'>
+									<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+								</td>
+								<td className='align-middle'>{producto.id}</td>
+								<td className='align-middle'>
+									{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
+								</td>
+								<td className='align-middle'>{producto.nombre}</td>
+								<td className='align-middle'>{producto.detalle}</td>
+								<td className='align-middle'>
+									<Row className='align-items-center '>
+										{editandoCantidad && (
+											<>
+												{idProductoEditarCantidad === producto.id && (
 													<>
-														<div className={styles['alert-cantidad']}>
-															<FaCircleInfo style={{ color: 'var(--red)' }} />
-															<p>La cantidad de este producto es muy baja.</p>
-														</div>
+														<Col>
+															<Form.Control
+																type='number'
+																value={cantidadProducto}
+																onChange={(e) => {
+																	setCantidadProducto(e.target.value);
+																}}
+															/>
+														</Col>
+														<Col className='align-middle'>
+															<a
+																onClick={(e) => {
+																	e.preventDefault();
+																	setEditandoCantidad(false);
+																}}
+															>
+																<FaCircleXmark
+																	size='1.5rem'
+																	style={{ color: 'var(--red)', cursor: 'pointer' }}
+																/>
+															</a>
+															<a
+																onClick={(e) => {
+																	handleUpdateCantidad(e, producto.id);
+																}}
+															>
+																<FaCircleCheck
+																	size='1.5rem'
+																	style={{ color: 'green', marginLeft: '1rem', cursor: 'pointer' }}
+																/>
+															</a>
+														</Col>
+
+														<Col></Col>
 													</>
 												)}
-											</Col>
-										</>
+												{idProductoEditarCantidad !== producto.id && (
+													<>
+														<Col>{producto.id}</Col>
+														<Col>
+															<FaPen style={{ color: 'lightslategrey' }} />
+														</Col>
+														<Col>
+															{producto.cantidad < cantidadProductoAceptable && (
+																<>
+																	<div
+																		onMouseEnter={() => setItemHoveringAlert(producto.id)}
+																		onMouseLeave={() => setItemHoveringAlert('')}
+																	>
+																		<FaCircleInfo style={{ color: 'var(--red)' }} />
+																	</div>
+																</>
+															)}
+														</Col>
+													</>
+												)}
+											</>
+										)}
+										{!editandoCantidad && (
+											<>
+												<Col>{producto.cantidad}</Col>
+												<Col>
+													<a
+														onClick={() => {
+															setEditandoCantidad(true);
+															setIdProductoEditarCantidad(producto.id);
+															setCantidadProducto(producto.cantidad);
+														}}
+														style={{ cursor: 'pointer' }}
+													>
+														<FaPen style={{ color: 'var(--alt-text-color)' }} />
+													</a>
+												</Col>
+												<Col>
+													{producto.cantidad < cantidadProductoAceptable && (
+														<>
+															<div
+																onMouseEnter={() => setItemHoveringAlert(producto.id)}
+																onMouseLeave={() => {
+																	setItemHoveringAlert('');
+																}}
+															>
+																<FaCircleInfo style={{ color: 'var(--red)' }} />
+															</div>
+														</>
+													)}
+												</Col>
+											</>
+										)}
+									</Row>
+									{itemHoveringAlert === producto.id && (
+										<p className={styles['alert-cantidad-popup']}>
+											La cantidad de este producto es muy baja.
+										</p>
 									)}
-								</Row>
-							</td>
-							<td align='center' className='align-middle'>
-								{producto.disponible && <FaCheck style={{ color: 'green' }} />}
-								{!producto.disponible && <FaCheck style={{ color: 'gray' }} />}
-							</td>
-							<td className={`align-middle ${styles['producto-accion-dropdown']}`}>
-								<FaCaretDown style={{ color: 'var(--alt-text-color)' }} />
-								<div className={styles['producto-accion-opciones']}>
-									<a
-										onClick={(e) => handleUpdateEstado(e, producto.id)}
-										style={{ cursor: 'pointer' }}
-									>
-										Dar de
-										{producto.disponible && ' baja'}
-										{!producto.disponible && ' alta'}
-									</a>
-									<hr />
-									<a
-										onClick={(e) => {
-											handleUpdateProductoButtonPressed(e, producto);
-										}}
-										style={{ cursor: 'pointer' }}
-									>
-										Editar Producto
-									</a>
-								</div>
-							</td>
-						</tr>
+								</td>
+								<td align='center' className='align-middle'>
+									{producto.disponible && <FaCheck style={{ color: 'green' }} />}
+									{!producto.disponible && <FaCheck style={{ color: 'gray' }} />}
+								</td>
+								<td
+									align='center'
+									className='align-middle'
+									onMouseEnter={() => setItemHoveringEditar(producto.id)}
+									onMouseLeave={() => {
+										setItemHoveringEditar('');
+									}}
+								>
+									<FaCaretDown style={{ color: 'var(--alt-text-color)' }} />
+									{itemHoveringEditar === producto.id && (
+										<div className={styles['producto-accion-opciones']}>
+											<a
+												onClick={(e) => handleUpdateEstado(e, producto.id)}
+												style={{ cursor: 'pointer' }}
+											>
+												Dar de
+												{producto.disponible && ' baja'}
+												{!producto.disponible && ' alta'}
+											</a>
+											<hr />
+											<a
+												onClick={(e) => {
+													handleUpdateProductoButtonPressed(e, producto);
+												}}
+												style={{ cursor: 'pointer' }}
+											>
+												Editar Producto
+											</a>
+										</div>
+									)}
+								</td>
+							</tr>
+						</>
 					))}
 				</tbody>
 			</Table>

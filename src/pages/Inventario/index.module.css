@@ -101,28 +101,16 @@
 	color: var(--alt-text-color);
 }
 
-.alert-cantidad {
-	position: relative;
-}
-
-.alert-cantidad p {
+.alert-cantidad-popup {
 	background-color: var(--alt-background);
 	width: 10rem;
 	padding: 0.8rem;
 	border-radius: 0.8rem;
 	text-decoration: none;
-	display: none;
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-
-.alert-cantidad:hover p {
 	display: block;
-}
-
-.producto-accion-dropdown {
-	position: relative;
+	position: absolute;
+	right: 15%;
+	z-index: 1;
 }
 
 .producto-accion-opciones {
@@ -131,14 +119,10 @@
 	padding: 0.8rem;
 	border-radius: 0.8rem;
 	text-decoration: none;
-	display: none;
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-
-.producto-accion-dropdown:hover .producto-accion-opciones {
 	display: block;
+	position: absolute;
+	right: 5%;
+	z-index: 2;
 }
 
 @media (min-width: 768px) {

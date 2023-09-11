@@ -35,10 +35,61 @@ export default function Inventario() {
 			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
 			cantidad: 8,
 		},
+		{
+			id: 4,
+			disponible: true,
+			categoria: 'materiales',
+			nombre: 'Plumones de pizarra',
+			detalle: 'Plumon de pizarra color rojo',
+			cantidad: 6,
+		},
+		{
+			id: 5,
+			disponible: true,
+			categoria: 'herramientas',
+			nombre: 'Llaves Allen',
+			detalle: 'Set de llaves allen de distintos tamaños',
+			cantidad: 2,
+		},
+		{
+			id: 6,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
+		{
+			id: 7,
+			disponible: true,
+			categoria: 'materiales',
+			nombre: 'Plumones de pizarra',
+			detalle: 'Plumon de pizarra color rojo',
+			cantidad: 6,
+		},
+		{
+			id: 8,
+			disponible: true,
+			categoria: 'herramientas',
+			nombre: 'Llaves Allen',
+			detalle: 'Set de llaves allen de distintos tamaños',
+			cantidad: 2,
+		},
+		{
+			id: 9,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
 	]);
+	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(9);
+
+	const [productos, setProductos] = useState(productosGuardados);
 
 	const [paginacionParams, setPaginacionParams] = useState(() => {
-		const elementosPorPagina = 7;
+		const elementosPorPagina = 8;
 		return {
 			cantidadPaginas: Math.ceil(productosGuardados.length / elementosPorPagina),
 			maxCantidadPaginas: 7, // procurar que siempre sea un numero impar
@@ -48,11 +99,8 @@ export default function Inventario() {
 		};
 	});
 	const [productosPorPagina, setProductosPorPagina] = useState(
-		productosGuardados.slice(paginacionParams.limite),
+		productos.slice(paginacionParams.limite),
 	);
-
-	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(3);
-	const [productos, setProductos] = useState(productosPorPagina);
 
 	const [editandoProducto, setEditandoProducto] = useState(false);
 	const [editandoCantidad, setEditandoCantidad] = useState(false);
@@ -73,7 +121,7 @@ export default function Inventario() {
 		const productosTipoFiltered = [];
 
 		tipoProductoFilter.forEach((filtro) => {
-			productosPorPagina.forEach((producto) => {
+			productosGuardados.forEach((producto) => {
 				if (producto.categoria === filtro && !productosTipoFiltered.includes(producto))
 					productosTipoFiltered.push(producto);
 			});
@@ -82,7 +130,7 @@ export default function Inventario() {
 		const productosEstadoFiltered = [];
 
 		estadoProductoFilter.forEach((filtro) => {
-			productosPorPagina.forEach((producto) => {
+			productosGuardados.forEach((producto) => {
 				let cumpleFiltro = false;
 
 				switch (filtro) {
@@ -120,7 +168,7 @@ export default function Inventario() {
 		} else if (estadoProductoFilter.length > 0) {
 			productosFiltered = productosEstadoFiltered;
 		} else {
-			productosFiltered = productosPorPagina;
+			productosFiltered = productosGuardados;
 		}
 
 		if (searchQuery === '') setProductos(productosFiltered);
@@ -168,6 +216,8 @@ export default function Inventario() {
 		e.preventDefault();
 
 		filterProductos();
+
+		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
 	};
 
 	const handleSearchBar = (e) => {
@@ -206,7 +256,7 @@ export default function Inventario() {
 	const handleUpdateEstado = (e, idProducto) => {
 		e.preventDefault();
 
-		const productosNuevo = productosPorPagina.map((producto) => {
+		const productosNuevo = productosGuardados.map((producto) => {
 			if (producto.id === idProducto) {
 				return { ...producto, disponible: !producto.disponible };
 			} else {
@@ -220,7 +270,7 @@ export default function Inventario() {
 	const handleUpdateCantidad = (e, idProducto) => {
 		e.preventDefault();
 
-		const productosNuevo = productosPorPagina.map((producto) => {
+		const productosNuevo = productosGuardados.map((producto) => {
 			if (producto.id === idProducto) {
 				return { ...producto, cantidad: cantidadProducto };
 			} else {
@@ -260,7 +310,7 @@ export default function Inventario() {
 			disponible: estadoProducto,
 		};
 
-		const productosNuevo = productosPorPagina.map((producto) => {
+		const productosNuevo = productosGuardados.map((producto) => {
 			if (producto.id === idProducto) {
 				return nuevoProducto;
 			} else {
@@ -273,9 +323,7 @@ export default function Inventario() {
 	};
 
 	useEffect(() => {
-		const cantidadPaginas = Math.ceil(
-			productosGuardados.length / paginacionParams.elementosPorPagina,
-		);
+		const cantidadPaginas = Math.ceil(productos.length / paginacionParams.elementosPorPagina);
 
 		setPaginacionParams((prev) => ({
 			...prev,
@@ -283,16 +331,16 @@ export default function Inventario() {
 		}));
 
 		setProductosPorPagina(
-			productosGuardados.slice(
+			productos.slice(
 				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
 				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
 			),
 		);
-	}, [productosGuardados]);
+	}, [productosGuardados, productos]);
 
 	useEffect(() => {
 		setProductosPorPagina(
-			productosGuardados.slice(
+			productos.slice(
 				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
 				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
 			),
@@ -301,7 +349,12 @@ export default function Inventario() {
 
 	useEffect(() => {
 		filterProductos();
-	}, [productosPorPagina, searchQuery]);
+	}, [productosGuardados]);
+
+	useEffect(() => {
+		filterProductos();
+		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
+	}, [searchQuery]);
 
 	return (
 		<Layout>
@@ -534,8 +587,8 @@ export default function Inventario() {
 				</Col>
 				<Col xs={12} md={10}>
 					<InventarioTable
+						productosPorPagina={productosPorPagina}
 						productos={productos}
-						productosGuardados={productosGuardados}
 						paginacionParams={paginacionParams}
 						setPaginacionParams={setPaginacionParams}
 						editandoCantidad={editandoCantidad}
