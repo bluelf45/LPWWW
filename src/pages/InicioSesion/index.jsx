@@ -10,6 +10,7 @@ export default function InicioSesion() {
 	const [usuario, setUsuario] = useState('');
 	const [password, setPassword] = useState('');
 	const router = useRouter();
+	const [error, setError] = useState('');
 
 	const usuariosGuardados = [
 		{
@@ -56,8 +57,9 @@ export default function InicioSesion() {
 			(obj) => obj.usuario === usuario && obj.password === password,
 		);
 		if (obtenerUsuario !== undefined) {
-			console.log(obtenerUsuario.tipoUsuario);
 			handleLogin(obtenerUsuario.tipoUsuario);
+		} else {
+			setError('Nombre de Usuario o Contraseña Incorrectos.');
 		}
 	};
 
@@ -89,6 +91,18 @@ export default function InicioSesion() {
 							onChange={(e) => setPassword(e.target.value)}
 						></input>
 					</div>
+					{error && (
+						<p
+							style={{
+								color: 'var(--red)',
+								fontSize: '0.86rem',
+								margin: '0rem 0rem',
+								border: 'none',
+							}}
+						>
+							{error}
+						</p>
+					)}
 				</div>
 				<div className={styles['login-container']}>
 					<div className={styles['custom-button']} onClick={() => verificar(usuario, password)}>
