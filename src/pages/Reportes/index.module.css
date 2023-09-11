@@ -84,6 +84,41 @@
 	background-color: var(--alt-text-color) !important;
 }
 
+.report-button,
+.report-button-pressed {
+	text-decoration: none;
+	text-wrap: nowrap;
+	cursor: pointer;
+	color: black;
+	padding: 0.4rem;
+	margin: 0.5rem;
+	border: 0.1rem solid var(--primary-color);
+	border-radius: 1rem;
+}
+
+.report-button:hover {
+	color: black;
+	background-color: var(--alt-background);
+	border-color: var(--primary-color);
+}
+
+.report-button:active {
+	color: black;
+	background-color: var(--red);
+	border-color: var(--primary-color);
+}
+
+.report-button input,
+.report-button-pressed input {
+	display: none;
+}
+
+.report-button-pressed {
+	color: white;
+	background-color: var(--alt-text-color);
+	border-color: var(--primary-color);
+}
+
 .report-checkbox,
 .report-checkbox-checked {
 	text-decoration: none;

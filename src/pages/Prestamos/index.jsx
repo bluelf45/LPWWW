@@ -27,6 +27,7 @@ export default function Perfil() {
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-3-01',
 			Usuario: 'Juan Perez',
+			aceptado: true,
 		},
 		{
 			id: 2,
@@ -38,6 +39,7 @@ export default function Perfil() {
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-5-01',
 			Usuario: 'Juan Gonzalez',
+			aceptado: true,
 		},
 		{
 			id: 3,
@@ -49,20 +51,68 @@ export default function Perfil() {
 			Estado: 'Prestamo',
 			fechaPrestamo: '2023-10-01',
 			Usuario: 'Patricio Perez',
+			aceptado: false,
+		},
+		{
+			id: 4,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+			Estado: 'Prestamo',
+			fechaPrestamo: '2023-10-01',
+			Usuario: 'Patricio Perez',
+			aceptado: null,
 		},
 	]);
 	const [editandoProducto, setEditandoProducto] = useState(false);
+	const [creandoProducto, setCreandoProducto] = useState(false);
 	const [cantidadProducto, setCantidadProducto] = useState(0);
 	const [EstadoProducto, setEstadoProducto] = useState('');
 	const [nombreProducto, setNombreProducto] = useState('');
 	const [idProductoEditar, setIdProductoEditar] = useState();
 	const [FechaProducto, setFechaProducto] = useState(Date.now());
 	const [showProductoModal, setShowProductoModal] = useState(false);
+	const [showCrearSolicitudModal, setshowCrearSolicitudModal] = useState(false);
 	const [ProductosVisibles, setProductosVisibles] = useState([...productosGuardados]);
+	const [detalleProductos, setDetalleProductos] = useState('');
+	const [nombreUsuario, setNombreUsuario] = useState('');
+	const [categoriaProducto, setCategoriaProducto] = useState('');
+
+	const findLastID = () => {
+		let lastID = 0;
+		ProductosVisibles.forEach((producto) => {
+			if (producto.id > lastID) {
+				lastID = producto.id;
+			}
+		});
+		console.log(lastID);
+		return lastID + 1;
+	};
 	useEffect(() => {
 		setProductosVisibles([...productosGuardados]);
 	}, [productosGuardados]);
-
+	const handleCreateProducto = (e) => {
+		e.preventDefault();
+		const temp = [...ProductosVisibles];
+		const lastId = findLastID();
+		temp.push({
+			id: lastId,
+			Estado: 'Devolucion',
+			Usuario: nombreUsuario,
+			cantidad: cantidadProducto,
+			nombre: nombreProducto,
+			fechaPrestamo: FechaProducto,
+			detalle: detalleProductos,
+			categoria: categoriaProducto,
+			aceptado: false,
+		});
+		setProductosVisibles([...temp]);
+		setShowProductoModal(false);
+		setshowCrearSolicitudModal(false);
+		setCreandoProducto(false);
+	};
 	const HandleEditPrestamo = (e, producto) => {
 		e.preventDefault();
 
@@ -70,6 +120,11 @@ export default function Perfil() {
 		setEditandoProducto(true);
 		setIdProductoEditar(producto.id);
 	};
+	const HandleCreateSolicitudModal = (e) => {
+		e.preventDefault();
+		setshowCrearSolicitudModal(true);
+	};
+
 	const handleUpdateProducto = (e) => {
 		e.preventDefault();
 		const temp = [];
@@ -109,119 +164,245 @@ export default function Perfil() {
 		});
 		setProductosVisibles([...temp]);
 	};
-	useEffect(() => {}, [ProductosVisibles, editandoProducto]);
+	useEffect(() => {}, [ProductosVisibles, editandoProducto, creandoProducto]);
 	return (
 		<Layout>
-			<Col sm md>
-				<h1 style={{ color: 'var(--alt-text-color)' }}>Prestamos y Devoluciones</h1>
-			</Col>
-			<Col sm md>
-				<p className='h5'>Estado del prestamo</p>
-				<label className={styles['filter-checkbox']} htmlFor='Prestamo'>
-					<input type='checkbox' id='Prestamo' onChange={HandleChanges} />
-					<span>Prestamos</span>
-				</label>
-				<label className={styles['filter-checkbox']} htmlFor='Devolucion'>
-					<input type='checkbox' id='Devolucion' onChange={HandleChanges} />
-					<span>Devoluciones</span>
-				</label>
-			</Col>
-			<div className='row'>
-				<Conditional
-					condition={ViewDefiner[tipoUsuario] > 2}
-					children1={<PrestamosTabla productos={ProductosVisibles} />}
-					children2={
-						<>
-							<Modal
-								show={showProductoModal}
-								onHide={() => setShowProductoModal(false)}
-								size='lg'
-								aria-labelledby='contained-modal-title-vcenter'
-								centered
-							>
-								<Modal.Header closeButton>
-									<Modal.Title
-										id='contained-modal-title-vcenter'
-										style={{ color: 'var(--alt-text-color)' }}
-									>
-										Editar Prestamo
-									</Modal.Title>
-								</Modal.Header>
-								<Form
-									onSubmit={(e) => {
-										handleUpdateProducto(e, idProductoEditar);
-									}}
-								>
-									<Modal.Body>
-										<Row>
-											<Col>
-												<Form.Group controlId='duedate'>
-													<Form.Control
-														type='date'
-														name='duedate'
-														placeholder='Due date'
-														value={FechaProducto}
-														onChange={(e) => setFechaProducto(e.target.value)}
-													/>
-												</Form.Group>
-											</Col>
-											<Form.Group className='mb-3' controlId='formNombre'>
-												<Form.Label>Estado del Prestamo</Form.Label>
-												<Form.Select
-													type='text'
-													value={EstadoProducto}
-													defaultValue={EstadoProducto}
-													onChange={(e) => setEstadoProducto(e.target.value)}
-													placeholder='Estado...'
-													className={styles['text-form']}
-													required
-												>
-													<option value='Prestamo'>Prestado</option>
-													<option value='Devolucion'>Devuelto</option>
-												</Form.Select>
-											</Form.Group>
-											<Form.Group className='mb-3' controlId='formCantidad'>
-												<Form.Label>Cantidad</Form.Label>
-												<Form.Control
-													type='number'
-													min='0'
-													value={cantidadProducto}
-													onChange={(e) => setCantidadProducto(e.target.value)}
-													className={styles['form-categoria-dropdown']}
-													required
-												/>
-											</Form.Group>
-											<Form.Group className='mb-3' controlId='formCantidad'>
-												<Form.Label>Nombre Producto</Form.Label>
-												<Form.Control
-													type='text'
-													// defaultValue={productosGuardados[idProductoEditar].nombre}
-													min='0'
-													value={nombreProducto}
-													onChange={(e) => setNombreProducto(e.target.value)}
-													className={styles['form-categoria-dropdown']}
-													required
-												/>
-											</Form.Group>
-										</Row>
-										<div style={{ display: 'flex' }}>
-											<Button type='submit' className={styles['custom-button']}>
-												{editandoProducto && 'Editar'}
-												{!editandoProducto && 'Agregar'}
-											</Button>
-										</div>
-									</Modal.Body>
-								</Form>
-							</Modal>
+			<h1 style={{ color: 'var(--alt-text-color)' }}>Prestamos y Devoluciones</h1>
 
-							<PrestamosTablaAdmin
-								productos={ProductosVisibles}
-								HandleEditPrestamo={HandleEditPrestamo}
-							/>
-						</>
-					}
-				/>
-			</div>
+			<Row>
+				<Col xs={12} md={2} className={styles['filter-selection']}>
+					<div className='d-flex flex-column'>
+						<p className='h5'>Filtros estado de prestamos</p>
+						<label className={styles['filter-checkbox']} htmlFor='Prestamo'>
+							<input type='checkbox' id='Prestamo' onChange={HandleChanges} />
+							<span>Prestamos</span>
+						</label>
+						<label className={styles['filter-checkbox']} htmlFor='Devolucion'>
+							<input type='checkbox' id='Devolucion' onChange={HandleChanges} />
+							<span>Devoluciones</span>
+						</label>
+					</div>
+					<Button onClick={HandleCreateSolicitudModal} className={` mt-3 btn-primary`}>
+						Crear Solicitud
+					</Button>
+					<Modal
+						show={showCrearSolicitudModal}
+						onHide={() => setshowCrearSolicitudModal(false)}
+						size='lg'
+						aria-labelledby='contained-modal-title-vcenter'
+						centered
+					>
+						<Modal.Header closeButton>
+							<Modal.Title
+								id='contained-modal-title-vcenter'
+								style={{ color: 'var(--alt-text-color)' }}
+							>
+								Crear Solicitud
+							</Modal.Title>
+						</Modal.Header>
+						<Form
+							onSubmit={(e) => {
+								handleCreateProducto(e);
+							}}
+						>
+							<Modal.Body>
+								<Row>
+									<Col>
+										<Form.Group className='mb-3' controlId='formUsuario'>
+											<Form.Label>Usuario</Form.Label>
+											<Form.Control
+												type='text'
+												// defaultValue={productosGuardados[idProductoEditar].nombre}
+												min='0'
+												value={nombreUsuario}
+												onChange={(e) => setNombreUsuario(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+												required
+											/>
+										</Form.Group>
+									</Col>
+									<Col>
+										{' '}
+										<Form.Group className='mb-3' controlId='formNombre'>
+											<Form.Label>Nombre Producto</Form.Label>
+											<Form.Control
+												type='text'
+												// defaultValue={productosGuardados[idProductoEditar].nombre}
+												min='0'
+												value={nombreProducto}
+												onChange={(e) => setNombreProducto(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+												required
+											/>
+										</Form.Group>
+									</Col>
+								</Row>
+								<Row>
+									<Col>
+										{' '}
+										<Form.Group className='mb-3' controlId='formNombre'>
+											<Form.Label>Detalle del Producto</Form.Label>
+											<Form.Control
+												type='text'
+												// defaultValue={productosGuardados[idProductoEditar].nombre}
+												min='0'
+												value={detalleProductos}
+												onChange={(e) => setDetalleProductos(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+												required
+											/>
+										</Form.Group>
+									</Col>
+									<Col>
+										<Form.Group className='mb-3' controlId='formCantidad'>
+											<Form.Label>Cantidad</Form.Label>
+											<Form.Control
+												type='number'
+												min='0'
+												value={cantidadProducto}
+												onChange={(e) => setCantidadProducto(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+												required
+											/>
+										</Form.Group>
+									</Col>
+								</Row>
+								<Row>
+									<Col>
+										{' '}
+										<Form.Group className='mb-3' controlId='formCategoria'>
+											<Form.Label>Categoria</Form.Label>
+											<Form.Control
+												type='text'
+												value={categoriaProducto}
+												onChange={(e) => setCategoriaProducto(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+												required
+											/>
+										</Form.Group>
+									</Col>
+									<Col>
+										{' '}
+										<Form.Group controlId='duedate'>
+											<Form.Label>Fecha Solicitud</Form.Label>
+											<Form.Control
+												type='date'
+												name='duedate'
+												placeholder='Due date'
+												value={FechaProducto}
+												onChange={(e) => setFechaProducto(e.target.value)}
+												className={styles['form-categoria-dropdown']}
+											/>
+										</Form.Group>
+									</Col>
+								</Row>
+								<div style={{ display: 'flex' }}>
+									<Button type='submit' className={styles['custom-button']}>
+										Crear Solicitud
+									</Button>
+								</div>
+							</Modal.Body>
+						</Form>
+					</Modal>
+				</Col>
+				<Col>
+					<div className='row'>
+						<Conditional
+							condition={ViewDefiner[tipoUsuario] > 2}
+							children1={<PrestamosTabla productos={ProductosVisibles} />}
+							children2={
+								<>
+									<Modal
+										show={showProductoModal}
+										onHide={() => setShowProductoModal(false)}
+										size='lg'
+										aria-labelledby='contained-modal-title-vcenter'
+										centered
+									>
+										<Modal.Header closeButton>
+											<Modal.Title
+												id='contained-modal-title-vcenter'
+												style={{ color: 'var(--alt-text-color)' }}
+											>
+												Editar Prestamo
+											</Modal.Title>
+										</Modal.Header>
+										<Form
+											onSubmit={(e) => {
+												handleUpdateProducto(e, idProductoEditar);
+											}}
+										>
+											<Modal.Body>
+												<Row>
+													<Col>
+														<Form.Group controlId='duedate'>
+															<Form.Control
+																type='date'
+																name='duedate'
+																placeholder='Due date'
+																value={FechaProducto}
+																onChange={(e) => setFechaProducto(e.target.value)}
+															/>
+														</Form.Group>
+													</Col>
+													<Form.Group className='mb-3' controlId='formNombre'>
+														<Form.Label>Estado del Prestamo</Form.Label>
+														<Form.Select
+															type='text'
+															value={EstadoProducto}
+															defaultValue={EstadoProducto}
+															onChange={(e) => setEstadoProducto(e.target.value)}
+															placeholder='Estado...'
+															className={styles['text-form']}
+															required
+														>
+															<option value='Prestamo'>Prestado</option>
+															<option value='Devolucion'>Devuelto</option>
+														</Form.Select>
+													</Form.Group>
+													<Form.Group className='mb-3' controlId='formCantidad'>
+														<Form.Label>Cantidad</Form.Label>
+														<Form.Control
+															type='number'
+															min='0'
+															value={cantidadProducto}
+															onChange={(e) => setCantidadProducto(e.target.value)}
+															className={styles['form-categoria-dropdown']}
+															required
+														/>
+													</Form.Group>
+													<Form.Group className='mb-3' controlId='formCantidad'>
+														<Form.Label>Nombre Producto</Form.Label>
+														<Form.Control
+															type='text'
+															// defaultValue={productosGuardados[idProductoEditar].nombre}
+															min='0'
+															value={nombreProducto}
+															onChange={(e) => setNombreProducto(e.target.value)}
+															className={styles['form-categoria-dropdown']}
+															required
+														/>
+													</Form.Group>
+												</Row>
+												<div style={{ display: 'flex' }}>
+													<Button type='submit' className={styles['custom-button']}>
+														{editandoProducto && 'Editar'}
+														{!editandoProducto && 'Agregar'}
+													</Button>
+												</div>
+											</Modal.Body>
+										</Form>
+									</Modal>
+									<PrestamosTablaAdmin
+										productos={ProductosVisibles}
+										HandleEditPrestamo={HandleEditPrestamo}
+									/>
+								</>
+							}
+						/>
+					</div>
+				</Col>
+			</Row>
 		</Layout>
 	);
 }

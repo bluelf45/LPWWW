@@ -6,7 +6,7 @@ import { FaUser, FaLock, FaBookOpenReader } from 'react-icons/fa6';
 import Footer from '@/components/Footer';
 
 export default function InicioSesion() {
-	const { setAuthenticated, setTipoUsuario } = useContext(AuthContext);
+	const { setAuthenticated, setTipoUsuario, setUsername } = useContext(AuthContext);
 	const [usuario, setUsuario] = useState('');
 	const [password, setPassword] = useState('');
 	const router = useRouter();
@@ -37,11 +37,17 @@ export default function InicioSesion() {
 			password: 'docente',
 			tipoUsuario: 'docente',
 		},
+		{
+			usuario: 'Juanito.Perez',
+			password: '1234',
+			tipoUsuario: 'alumno',
+		},
 	];
 
 	const handleLogin = (tipoUsuario) => {
 		setAuthenticated(true);
 		setTipoUsuario(tipoUsuario);
+		setUsername(usuario);
 		router.push('/Home');
 	};
 

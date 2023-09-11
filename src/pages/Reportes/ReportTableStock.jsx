@@ -1,25 +1,34 @@
+import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { PaginationControl } from 'react-bootstrap-pagination-control';
 import styles from './index.module.css';
 import { FaImage, FaCheck } from 'react-icons/fa6';
 
 export default function ReportTableStock({ productos }) {
+	const [page, SetPage] = useState(1);
+	const startIndex = (page - 1) * 5;
+	const endIndex = startIndex + 5;
+	const currentPageData = productos.slice(startIndex, endIndex);
+	console.log(startIndex, ' ', endIndex);
+
 	return (
-		<Table hover responsive className={`mt-3 mx-auto ${styles['report-table-stock']}`}>
-			<thead>
-				<tr className={styles['table-head']}>
-					<th />
-					<th>ID</th>
-					<th>Categoría</th>
-					<th>Nombre</th>
-					<th>Detalle</th>
-					<th>Cantidad</th>
-					<th>Disponible</th>
-					<th />
-				</tr>
-			</thead>
-			<tbody>
-				{productos &&
-					productos.map((producto) => (
+		<div>
+			<Table hover responsive className={`mt-3 mx-auto ${styles['report-table-stock']}`}>
+				<thead>
+					<tr className={styles['table-head']}>
+						<th />
+						<th>ID</th>
+						<th>Categoría</th>
+						<th>Nombre</th>
+						<th>Detalle</th>
+						<th>Cantidad</th>
+						<th>Disponible</th>
+						<th />
+					</tr>
+				</thead>
+				<tbody>
+					{currentPageData.map((producto) => (
 						<tr key={producto.id}>
 							<td align='center' className='align-middle'>
 								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
@@ -39,7 +48,17 @@ export default function ReportTableStock({ productos }) {
 							</td>
 						</tr>
 					))}
-			</tbody>
-		</Table>
+				</tbody>
+			</Table>
+			<PaginationControl
+				page={page}
+				between={4}
+				total={productos.length}
+				limit={5}
+				changePage={(page) => {
+					SetPage(page);
+				}}
+			/>
+		</div>
 	);
 }

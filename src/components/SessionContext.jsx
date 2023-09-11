@@ -5,6 +5,8 @@ const initialValue = {
 	setAuthenticated: () => {},
 	tipoUsuario: '',
 	setTipoUsuario: () => {},
+	username: '',
+	setUsername: () => {},
 };
 
 const AuthContext = createContext(initialValue);
@@ -12,6 +14,7 @@ const AuthContext = createContext(initialValue);
 const AuthProvider = ({ children }) => {
 	const [authenticated, setAuthenticated] = useState(initialValue.authenticated);
 	const [tipoUsuario, setTipoUsuario] = useState(initialValue.tipoUsuario);
+	const [username, setUsername] = useState(initialValue.username);
 
 	return (
 		<AuthContext.Provider
@@ -20,6 +23,8 @@ const AuthProvider = ({ children }) => {
 				setAuthenticated,
 				tipoUsuario,
 				setTipoUsuario,
+				username,
+				setUsername,
 			}}
 		>
 			{children}
