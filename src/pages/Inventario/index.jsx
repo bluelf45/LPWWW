@@ -35,56 +35,8 @@ export default function Inventario() {
 			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
 			cantidad: 8,
 		},
-		{
-			id: 4,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Plumones de pizarra',
-			detalle: 'Plumon de pizarra color rojo',
-			cantidad: 6,
-		},
-		{
-			id: 5,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 2,
-		},
-		{
-			id: 6,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 8,
-		},
-		{
-			id: 7,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Plumones de pizarra',
-			detalle: 'Plumon de pizarra color rojo',
-			cantidad: 6,
-		},
-		{
-			id: 8,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 2,
-		},
-		{
-			id: 9,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 8,
-		},
 	]);
-	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(9);
+	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(3);
 
 	const [productos, setProductos] = useState(productosGuardados);
 
