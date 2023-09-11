@@ -1,27 +1,34 @@
 import { Table } from 'react-bootstrap';
 import styles from './index.module.css';
 import { FaImage } from 'react-icons/fa6';
+import { useState } from 'react';
+import { PaginationControl } from 'react-bootstrap-pagination-control';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // No tengo idea si hay que contar la cantidad de veces que algo se aha pedido,
 // o la cantidad de productos pedidos. Lo hice para que contara la cantidad de objetos que se han prestado en total
 
 export default function ReportTableSolicitados({ solicitudes }) {
+	const [page, SetPage] = useState(1);
+	const startIndex = (page - 1) * 5;
+	const endIndex = startIndex + 5;
+	const currentPageData = solicitudes.slice(startIndex, endIndex);
 	return (
-		<Table hover responsive className={`mt-3 mx-auto ${styles['report-table-stock']}`}>
-			<thead>
-				<tr className={styles['table-head']}>
-					<th />
-					<th>ID</th>
-					<th>Categoría</th>
-					<th>Nombre</th>
-					<th>Detalle</th>
-					<th>NºSolicitudes</th>
-					<th />
-				</tr>
-			</thead>
-			<tbody>
-				{solicitudes &&
-					solicitudes.map((solicitud) => (
+		<div>
+			<Table hover responsive className={`mt-3 mx-auto ${styles['report-table-stock']}`}>
+				<thead>
+					<tr className={styles['table-head']}>
+						<th />
+						<th>ID</th>
+						<th>Categoría</th>
+						<th>Nombre</th>
+						<th>Detalle</th>
+						<th>NºSolicitudes</th>
+						<th />
+					</tr>
+				</thead>
+				<tbody>
+					{currentPageData.map((solicitud) => (
 						<tr key={solicitud.id}>
 							<td align='center' className='align-middle'>
 								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
@@ -37,7 +44,17 @@ export default function ReportTableSolicitados({ solicitudes }) {
 							</td>
 						</tr>
 					))}
-			</tbody>
-		</Table>
+				</tbody>
+			</Table>
+			<PaginationControl
+				page={page}
+				between={4}
+				total={currentPageData.length}
+				limit={5}
+				changePage={(page) => {
+					SetPage(page);
+				}}
+			/>
+		</div>
 	);
 }

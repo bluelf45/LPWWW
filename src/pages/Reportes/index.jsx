@@ -33,6 +33,46 @@ export default function Inventario() {
 			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
 			cantidad: 8,
 		},
+		{
+			id: 4,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
+		{
+			id: 5,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
+		{
+			id: 6,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
+		{
+			id: 7,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
+		{
+			id: 8,
+			disponible: false,
+			categoria: 'equipos',
+			nombre: 'Notebook Samsung',
+			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
+			cantidad: 8,
+		},
 	]);
 
 	const [productosSolicitados] = useState([
@@ -218,6 +258,24 @@ export default function Inventario() {
 							<span>Objetos mas perdidos</span>
 						</label>
 					</div>
+					<hr></hr>
+					<label
+						className={`report-button ${
+							selectedOption === 'descargar'
+								? styles['report-button-pressed']
+								: styles['report-button']
+						}`}
+						htmlFor='descargar'
+					>
+						<input
+							type='button'
+							id='descargar'
+							name='decargar'
+							value='descargar'
+							checked={selectedOption === 'descargar'}
+						/>
+						<span>Descargar Reporte</span>
+					</label>
 				</Col>
 				<Col xs={12} md={10}>
 					{(() => {
