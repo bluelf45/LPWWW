@@ -48,11 +48,6 @@ export default function Navbar() {
 							}
 							children2={<></>}
 						/>
-						<li className='nav-item'>
-							<Link className='nav-link' href='/Solicitudes'>
-								Solicitudes
-							</Link>
-						</li>
 						<Conditional
 							condition={ViewDefiner[tipoUsuario] < 2}
 							children1={

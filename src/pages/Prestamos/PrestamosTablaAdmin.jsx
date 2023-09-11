@@ -39,7 +39,7 @@ export default function PrestamosTablaAdmin({ productos, HandleEditPrestamo }) {
 							<td className='align-middle'>{producto.cantidad}</td>
 							<td className='align-middle'>{producto.fechaPrestamo}</td>
 							<td align='center' className='align-middle'>
-								{producto.aceptado && <FaCheck style={{ color: 'green' }} />}
+								{producto.aceptado === true && <FaCheck style={{ color: 'green' }} />}
 								{producto.aceptado === false && <FaCheck style={{ color: 'gray' }} />}
 								{producto.aceptado === null && <FaXmark style={{ color: 'red' }} />}
 							</td>

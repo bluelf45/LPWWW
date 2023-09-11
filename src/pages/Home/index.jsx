@@ -7,8 +7,8 @@ export default function Home() {
 
 	return (
 		<Layout>
-			<a>Bienvenido {username}</a>
-			<a>Tipo de Usuario {tipoUsuario}</a>
+			<h2>Bienvenido {username}</h2>
+			<h4>Tipo de Usuario {tipoUsuario}</h4>
 		</Layout>
 	);
 }

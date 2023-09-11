@@ -26,7 +26,7 @@ export default function Perfil() {
 			cantidad: 6,
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-3-01',
-			Usuario: 'Juan Perez',
+			Usuario: 'alumno',
 			aceptado: true,
 		},
 		{
@@ -38,7 +38,7 @@ export default function Perfil() {
 			cantidad: 2,
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-5-01',
-			Usuario: 'Juan Gonzalez',
+			Usuario: 'alumno',
 			aceptado: true,
 		},
 		{
@@ -50,7 +50,7 @@ export default function Perfil() {
 			cantidad: 8,
 			Estado: 'Prestamo',
 			fechaPrestamo: '2023-10-01',
-			Usuario: 'Patricio Perez',
+			Usuario: 'docente',
 			aceptado: false,
 		},
 		{
@@ -62,12 +62,13 @@ export default function Perfil() {
 			cantidad: 8,
 			Estado: 'Prestamo',
 			fechaPrestamo: '2023-10-01',
-			Usuario: 'Patricio Perez',
+			Usuario: 'docente',
 			aceptado: null,
 		},
 	]);
 	const [editandoProducto, setEditandoProducto] = useState(false);
 	const [creandoProducto, setCreandoProducto] = useState(false);
+	const [aceptarProducto, setAceptarProducto] = useState(false);
 	const [cantidadProducto, setCantidadProducto] = useState(0);
 	const [EstadoProducto, setEstadoProducto] = useState('');
 	const [nombreProducto, setNombreProducto] = useState('');
@@ -127,16 +128,23 @@ export default function Perfil() {
 
 	const handleUpdateProducto = (e) => {
 		e.preventDefault();
-		const temp = [];
-		productosGuardados.forEach((producto) => {
-			if (producto.id === idProductoEditar) {
-				producto.Estado = EstadoProducto;
-				producto.cantidad = cantidadProducto;
-				producto.nombre = nombreProducto;
-				producto.fechaPrestamo = FechaProducto;
-			}
-			temp.push(producto);
-		});
+		const temp = [...productosGuardados];
+		const producto = productosGuardados[idProductoEditar - 1];
+		if (EstadoProducto === '') {
+			producto.Estado = 'Prestamo';
+		} else {
+			producto.Estado = EstadoProducto;
+		}
+		if (aceptarProducto === 'null') {
+			producto.aceptado = null;
+		} else {
+			producto.aceptado = aceptarProducto === 'true';
+		}
+		console.log(producto.aceptado);
+		producto.cantidad = cantidadProducto;
+		producto.nombre = nombreProducto;
+		producto.fechaPrestamo = FechaProducto;
+		temp[idProductoEditar - 1] = producto;
 		setProductosVisibles([...temp]);
 		setShowProductoModal(false);
 		setEditandoProducto(false);
@@ -336,21 +344,38 @@ export default function Perfil() {
 												<Row>
 													<Col>
 														<Form.Group controlId='duedate'>
+															<Form.Label>Fecha Prestamo</Form.Label>
 															<Form.Control
 																type='date'
 																name='duedate'
 																placeholder='Due date'
 																value={FechaProducto}
+																className={styles['text-form']}
 																onChange={(e) => setFechaProducto(e.target.value)}
 															/>
+														</Form.Group>
+													</Col>
+													<Col>
+														<Form.Group className='mb-3' controlId='formNombre'>
+															<Form.Label>Aceptar prestamo</Form.Label>
+															<Form.Select
+																type='text'
+																value={aceptarProducto}
+																onChange={(e) => setAceptarProducto(e.target.value)}
+																className={styles['text-form']}
+																required
+															>
+																<option value='true'>Aceptar</option>
+																<option value='false'>Esperar</option>
+																<option value='null'>Rechazar</option>
+															</Form.Select>
 														</Form.Group>
 													</Col>
 													<Form.Group className='mb-3' controlId='formNombre'>
 														<Form.Label>Estado del Prestamo</Form.Label>
 														<Form.Select
 															type='text'
-															value={EstadoProducto}
-															defaultValue={EstadoProducto}
+															defaultValue={'Prestamo'}
 															onChange={(e) => setEstadoProducto(e.target.value)}
 															placeholder='Estado...'
 															className={styles['text-form']}
