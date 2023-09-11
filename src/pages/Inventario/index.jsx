@@ -330,7 +330,10 @@ export default function Inventario() {
 				</Col>
 				<Col sm md className='mt-2 d-flex justify-content-center'>
 					<Form onSubmit={handleSearchBar}>
-						<Form.Group controlId='formSearchBar' style={{ display: 'inline-block' }}>
+						<Form.Group
+							controlId='formSearchBar'
+							style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+						>
 							<Form.Label visuallyHidden='true'>Barra de búsqueda</Form.Label>
 							<Form.Control
 								type='search'
@@ -339,7 +342,11 @@ export default function Inventario() {
 								placeholder='Busque por nombre de producto'
 							/>
 						</Form.Group>
-						<Button variant='light' type='submit' style={{ display: 'inline-block' }}>
+						<Button
+							variant='light'
+							type='submit'
+							style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+						>
 							<FaMagnifyingGlass style={{ color: 'var(--alt-text-color)' }} />
 						</Button>
 					</Form>
@@ -354,7 +361,7 @@ export default function Inventario() {
 							setEditandoProducto(false);
 						}}
 						style={{ cursor: 'pointer', textDecoration: 'none' }}
-						className='float-end'
+						className='float-sm-end'
 					>
 						<h5 style={{ color: 'var(--primary-color)' }}>+ Agregar Producto</h5>
 					</a>
@@ -469,7 +476,7 @@ export default function Inventario() {
 			<Row>
 				<Col xs={12} md={2} className={styles['filter-selection']}>
 					<p className='h5'>Tipo de Producto</p>
-					<div className='d-flex flex-column'>
+					<div className='d-flex flex-md-column flex-sm-wrap flex-wrap'>
 						<label
 							className={`${
 								tipoProductoFilter.includes('materiales')
@@ -506,7 +513,7 @@ export default function Inventario() {
 					</div>
 
 					<p className='h5 mt-3'>Estado del Producto</p>
-					<div className='d-flex flex-column'>
+					<div className='d-flex flex-md-column flex-sm-wrap flex-wrap'>
 						<label
 							className={`${
 								estadoProductoFilter.includes('disponible')
