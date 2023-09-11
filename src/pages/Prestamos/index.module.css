@@ -166,7 +166,7 @@
 @media (min-width: 768px) {
 	.filter-selection {
 		border-right: 0.1rem solid var(--alt-text-color);
-		height: 100%;
+		height: auto;
 	}
 }
 .filter-checkbox:has(:checked) {

@@ -3,11 +3,12 @@ import { AuthContext } from '@/components/SessionContext';
 import Layout from '@/components/Layout';
 
 export default function Home() {
-	const { tipoUsuario } = useContext(AuthContext);
+	const { username, tipoUsuario } = useContext(AuthContext);
 
 	return (
 		<Layout>
-			<a>Home {tipoUsuario}</a>
+			<a>Bienvenido {username}</a>
+			<a>Tipo de Usuario {tipoUsuario}</a>
 		</Layout>
 	);
 }
