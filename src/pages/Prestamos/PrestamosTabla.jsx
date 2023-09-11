@@ -1,5 +1,5 @@
 import { Table } from 'react-bootstrap';
-import { FaImage, FaXmark, FaCheck } from 'react-icons/fa6';
+import { FaXmark, FaCheck } from 'react-icons/fa6';
 import styles from './index.module.css';
 import { useContext } from 'react';
 import { AuthContext } from '@/components/SessionContext';
@@ -11,7 +11,7 @@ export default function PrestamosTabla({ productos, productosOcultos }) {
 			<Table hover responsive className={`mt-3 mx-auto ${styles['inventario-table']}`}>
 				<thead>
 					<tr className={styles['table-head']}>
-						<th />
+						<th>Creador</th>
 						<th>Estado</th>
 						<th>Categoría</th>
 						<th>Nombre</th>
@@ -28,9 +28,7 @@ export default function PrestamosTabla({ productos, productosOcultos }) {
 							<>
 								{producto.Usuario === username && (
 									<tr key={producto.id}>
-										<td align='center' className='align-middle'>
-											<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
-										</td>
+										<td className='align-middle'>{producto.CreadoPor}</td>
 										<td className='align-middle'>{producto.Estado}</td>
 										<td className='align-middle'>
 											{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}

@@ -8,7 +8,7 @@ import { AuthContext } from '@/components/SessionContext';
 import Conditional from '@/components/conditional';
 
 export default function Perfil() {
-	const { tipoUsuario } = useContext(AuthContext);
+	const { tipoUsuario, username } = useContext(AuthContext);
 	const ViewDefiner = {
 		panolero: 0,
 		coordinador: 1,
@@ -27,6 +27,7 @@ export default function Perfil() {
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-3-01',
 			Usuario: 'alumno',
+			CreadoPor: 'alumno',
 			aceptado: true,
 		},
 		{
@@ -39,7 +40,8 @@ export default function Perfil() {
 			Estado: 'Devolucion',
 			fechaPrestamo: '2023-5-01',
 			Usuario: 'alumno',
-			aceptado: true,
+			CreadoPor: 'alumno',
+			aceptado: false,
 		},
 		{
 			id: 3,
@@ -49,9 +51,10 @@ export default function Perfil() {
 			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
 			cantidad: 8,
 			Estado: 'Prestamo',
-			fechaPrestamo: '2023-10-01',
+			fechaPrestamo: '2023-10-02',
 			Usuario: 'docente',
-			aceptado: false,
+			CreadoPor: 'panolero',
+			aceptado: true,
 		},
 		{
 			id: 4,
@@ -64,6 +67,7 @@ export default function Perfil() {
 			fechaPrestamo: '2023-10-01',
 			Usuario: 'docente',
 			aceptado: null,
+			CreadoPor: 'docente',
 		},
 	]);
 	const [editandoProducto, setEditandoProducto] = useState(false);
@@ -108,6 +112,7 @@ export default function Perfil() {
 			detalle: detalleProductos,
 			categoria: categoriaProducto,
 			aceptado: false,
+			CreadoPor: username,
 		});
 		setProductosVisibles([...temp]);
 		setShowProductoModal(false);

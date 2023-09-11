@@ -11,6 +11,7 @@ export default function PrestamosTablaAdmin({ productos, HandleEditPrestamo }) {
 				<tr className={styles['table-head']}>
 					<th>Estado</th>
 					<th>Usuario</th>
+					<th>Creador</th>
 					<th>Categoría</th>
 					<th>Nombre</th>
 					<th>Detalle</th>
@@ -31,6 +32,7 @@ export default function PrestamosTablaAdmin({ productos, HandleEditPrestamo }) {
 								{producto.aceptado === null && <>Rechazado</>}
 							</td>
 							<td className='align-middle'>{producto.Usuario}</td>
+							<td className='align-middle'>{producto.CreadoPor}</td>
 							<td className='align-middle'>
 								{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
 							</td>
