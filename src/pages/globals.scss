@@ -23,8 +23,8 @@ $theme-colors: (
 
 .btn-primary {
 	color: white;
-	background-color: var(--primary-color);
-	border-color: var(--alt-text-color);
+	background-color: var(--primary-color) !important;
+	border-color: var(--alt-text-color) !important;
 }
 
 .btn-primary:hover,

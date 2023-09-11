@@ -195,7 +195,7 @@ export default function Perfil() {
 							<span>Devoluciones</span>
 						</label>
 					</div>
-					<Button onClick={HandleCreateSolicitudModal} className={` mt-3 btn-primary`}>
+					<Button onClick={HandleCreateSolicitudModal} className={`btn-custom`}>
 						Crear Solicitud
 					</Button>
 					<Modal

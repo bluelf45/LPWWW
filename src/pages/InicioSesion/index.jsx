@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { AuthContext } from '@/components/SessionContext';
 import styles from './index.module.css';
 import { FaUser, FaLock, FaBookOpenReader } from 'react-icons/fa6';
-import Footer from '@/components/Footer';
 
 export default function InicioSesion() {
 	const { setAuthenticated, setTipoUsuario, setUsername } = useContext(AuthContext);
@@ -110,7 +109,6 @@ export default function InicioSesion() {
 					</div>
 				</div>
 			</div>
-			<Footer></Footer>
 			{/*
 			<Row>
 				<Col>
