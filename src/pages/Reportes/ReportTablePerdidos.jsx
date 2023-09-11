@@ -19,24 +19,25 @@ export default function ReportTablePerdidos({ productos }) {
 				</tr>
 			</thead>
 			<tbody>
-				{productos.map((producto) => (
-					<tr key={producto.id}>
-						<td align='center' className='align-middle'>
-							<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
-						</td>
-						<td className='align-middle'>{producto.idSolicitud}</td>
-						<td className='align-middle'>{producto.nombrePersona}</td>
-						<td className='align-middle'>{producto.id}</td>
-						<td className='align-middle'>
-							{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
-						</td>
-						<td className='align-middle'>{producto.nombre}</td>
-						<td className='align-middle'>{producto.detalle}</td>
-						<td align='center' className='align-middle'>
-							{producto.cantidad}
-						</td>
-					</tr>
-				))}
+				{productos &&
+					productos.map((producto) => (
+						<tr key={producto.id}>
+							<td align='center' className='align-middle'>
+								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+							</td>
+							<td className='align-middle'>{producto.idSolicitud}</td>
+							<td className='align-middle'>{producto.nombrePersona}</td>
+							<td className='align-middle'>{producto.id}</td>
+							<td className='align-middle'>
+								{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
+							</td>
+							<td className='align-middle'>{producto.nombre}</td>
+							<td className='align-middle'>{producto.detalle}</td>
+							<td align='center' className='align-middle'>
+								{producto.cantidad}
+							</td>
+						</tr>
+					))}
 			</tbody>
 		</Table>
 	);
