@@ -2,8 +2,72 @@
 	color: white;
 	background-color: var(--primary-color);
 	border-color: var(--alt-text-color);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1rem;
+	width: 12rem;
+	height: 2rem;
+	cursor: pointer;
+	font-weight: 100;
 }
 
 .custom-button:hover {
 	background-color: var(--alt-text-color);
+}
+
+.page {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin-left: 0rem;
+}
+
+.main-container {
+	display: flex;
+	flex-direction: column;
+	margin: 10rem;
+	background: white;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 2rem;
+}
+
+.text {
+	color: var(--primary-color);
+	font-size: 3rem;
+	font-weight: 300;
+}
+
+.inputs {
+	margin-top: 0.4rem;
+	display: flex;
+	flex-direction: column;
+}
+
+.input {
+	display: flex;
+	align-items: center;
+	margin: auto;
+	width: 19rem;
+	height: 2.9rem;
+	border-radius: 1rem;
+	background: var(--alt-background);
+}
+
+.input input {
+	background: none;
+	border: none;
+	outline: none;
+}
+
+.login-container {
+	display: flex;
+	gap: 1rem;
+	margin: 1rem auto;
 }
