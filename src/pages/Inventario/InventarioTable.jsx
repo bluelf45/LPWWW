@@ -100,7 +100,7 @@ export default function InventarioTable({
 						<th style={{ width: '9%' }}>Categoría</th>
 						<th style={{ width: '18%' }}>Nombre</th>
 						<th style={{ width: '40%' }}>Detalle</th>
-						<th style={{ width: '10%' }}>Cantidad</th>
+						<th style={{ width: '18%' }}>Cantidad</th>
 						<th style={{ width: '5%' }}>Disponible</th>
 						<th />
 					</tr>
