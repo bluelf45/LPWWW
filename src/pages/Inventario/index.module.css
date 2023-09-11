@@ -47,8 +47,8 @@
 	background-color: transparent;
 	border-color: var(--primary-color);
 	text-align: left;
-	width: 18rem;
-	min-width: 18rem;
+	width: 20rem;
+	min-width: 20rem;
 	color: var(--alt-text-color);
 }
 

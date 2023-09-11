@@ -11,6 +11,28 @@
 	color: var(--alt-text-color);
 }
 
+.form-categoria-dropdown,
+.form-categoria-dropdown:focus,
+.form-categoria-dropdown:hover {
+	color: black;
+	background-color: transparent;
+	border-color: var(--primary-color);
+	text-align: left;
+	width: 20rem;
+	min-width: 20rem;
+	color: var(--alt-text-color);
+}
+
+.form-categoria-dropdown:focus {
+	box-shadow: 0.1rem 0.1rem 0.1rem var(--primary-color);
+}
+
+/* intento sacarle el color azul de bootstrap pero no funciona :( */
+.form-categoria-dropdown option:hover {
+	background-color: var(--primary-color);
+	color: var(--alt-text-color);
+}
+
 .usuarios-table {
 	max-width: 95%;
 	max-height: 100%;
@@ -48,6 +70,18 @@
 	color: white;
 	background-color: var(--alt-text-color);
 	border-color: var(--primary-color);
+}
+
+.usuario-accion-opciones {
+	text-wrap: nowrap;
+	background-color: var(--alt-background);
+	padding: 0.8rem;
+	border-radius: 0.8rem;
+	text-decoration: none;
+	display: block;
+	position: absolute;
+	right: 2%;
+	z-index: 2;
 }
 
 @media (min-width: 768px) {

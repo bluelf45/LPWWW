@@ -49,7 +49,7 @@ export default function Navbar() {
 							children2={<></>}
 						/>
 						<Conditional
-							condition={ViewDefiner[tipoUsuario] < 2}
+							condition={ViewDefiner[tipoUsuario] < 3}
 							children1={
 								<li>
 									<Link className='nav-link' href='/Usuarios'>
