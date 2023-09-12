@@ -1,6 +1,11 @@
-# LPWWW
+# Lenguajes de programacion en WWW
 # Instalacion
-Primero se tienen que instalar las dependencias con ```npm install```
+Primero se tienen que instalar las dependencias con   ```npm install```   
+
+Luego simplemente correr en la carpeta de la pagina   ```npm run dev```  
+
+
+# Funcionalidades
 Registrar prestamos y devoluciones de libros. contar con registro de stck de inventario, Historial de prestamos y devoluciones asociados a usuarios.
 Gestionar usuarios e ingresar nuevos usuarios o darlos de baja.
 Sistema de administracion de inventario para ingresar/clasificar/organizar recursos.  
