@@ -1,4 +1,6 @@
 # LPWWW
+# Instalacion
+Primero se tienen que instalar las dependencias con ```npm install```
 Registrar prestamos y devoluciones de libros. contar con registro de stck de inventario, Historial de prestamos y devoluciones asociados a usuarios.
 Gestionar usuarios e ingresar nuevos usuarios o darlos de baja.
 Sistema de administracion de inventario para ingresar/clasificar/organizar recursos.  
