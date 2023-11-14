@@ -1,157 +1,59 @@
 import { useState, useRef, useEffect } from 'react';
-import { Row, Col, Form, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
 import InventarioTable from './InventarioTable';
+import AddProducto from './AddProducto';
+import { useQuery, useMutation } from '@apollo/client';
+import { UPD_PRODUCTO, GET_PRODUCTOS } from './DocumentNodes';
 
 export default function Inventario() {
 	const [tipoProductoFilter, setTipoProductoFilter] = useState([]);
 	const [estadoProductoFilter, setEstadoProductoFilter] = useState([]);
+	const [cantidadProductoFilter, setCantidadProductoFilter] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
-
-	const [productosGuardados, setProductosGuardados] = useState([
-		{
-			id: 1,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Plumones de pizarra',
-			detalle: 'Plumon de pizarra color rojo',
-			cantidad: 6,
-		},
-		{
-			id: 2,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 2,
-		},
-		{
-			id: 3,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 8,
-		},
-	]);
-	const [ultimaIdGuardada, setUltimaIdGuardada] = useState(3);
-
-	const [productos, setProductos] = useState(productosGuardados);
+	const [productos, setProductos] = useState([]);
 
 	const [paginacionParams, setPaginacionParams] = useState({
 		elementosPorPagina: 8,
 		paginaActiva: 1,
 	});
 
-	const [productosPorPagina, setProductosPorPagina] = useState(
-		productos.slice(
-			paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
-			paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
-		),
-	);
-
 	const [editandoProducto, setEditandoProducto] = useState(false);
+	const [cantidadProducto, setCantidadProducto] = useState();
 	const [editandoCantidad, setEditandoCantidad] = useState(false);
-	const [idProductoEditar, setIdProductoEditar] = useState();
+	const [productoEditar, setProductoEditar] = useState({});
 	const [showProductoModal, setShowProductoModal] = useState(false);
-
-	const [nombreProducto, setNombreProducto] = useState('');
-	const [detalleProducto, setDetalleProducto] = useState('');
-	const [categoriaProducto, setCategoriaProducto] = useState('');
-	const [cantidadProducto, setCantidadProducto] = useState(0);
-	const [estadoProducto, setEstadoProducto] = useState(false);
+	const [cantidadTotal, setCantidadTotal] = useState(0);
 
 	const searchRef = useRef();
 
 	const cantidadProductoAceptable = 3;
 
-	const filterProductos = () => {
-		const productosTipoFiltered = [];
+	// eslint-disable-next-line no-unused-vars
+	const [updP, { dataUpdP, loadingUpdP, errorUpdP }] = useMutation(UPD_PRODUCTO, {
+		refetchQueries: [GET_PRODUCTOS, 'getInventario'],
+	});
+	// se filtran los datos cada vez que se cambia una de las variables del useQuery, pero ojo que para esto usa los datos almacenados en cache
+	// para actualizar los datos de forma manual usar la funcion refetch
+	const { loading, error, data, refetch } = useQuery(GET_PRODUCTOS, {
+		variables: {
+			page: paginacionParams.paginaActiva,
+			limit: paginacionParams.elementosPorPagina,
+			search: '',
+			tipoFilter: [],
+			estadoFilter: [],
+			cantidadFilter: [],
+		},
+	});
 
-		tipoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
-				if (producto.categoria === filtro && !productosTipoFiltered.includes(producto))
-					productosTipoFiltered.push(producto);
-			});
-		});
-
-		const productosEstadoFiltered = {};
-
-		estadoProductoFilter.forEach((filtro) => {
-			productosGuardados.forEach((producto) => {
-				let cumpleFiltro = false;
-				let key;
-
-				switch (filtro) {
-					case 'disponible':
-						if (producto.disponible) {
-							key = 'disponible';
-							cumpleFiltro = true;
-						}
-						break;
-					case 'no_disponible':
-						if (!producto.disponible) {
-							key = 'disponible';
-							cumpleFiltro = true;
-						}
-						break;
-					case 'cantidad_alta':
-						if (producto.cantidad >= cantidadProductoAceptable) {
-							key = 'cantidad';
-							cumpleFiltro = true;
-						}
-						break;
-					case 'cantidad_baja':
-						if (producto.cantidad < cantidadProductoAceptable) {
-							key = 'cantidad';
-							cumpleFiltro = true;
-						}
-						break;
-				}
-
-				if (cumpleFiltro) {
-					if (productosEstadoFiltered[key] === undefined) productosEstadoFiltered[key] = [];
-
-					if (!productosEstadoFiltered[key].includes(producto))
-						productosEstadoFiltered[key].push(producto);
-				}
-			});
-		});
-
-		let productosFiltered = [];
-
-		if (tipoProductoFilter.length > 0) {
-			productosFiltered = productosTipoFiltered;
-			if (estadoProductoFilter.length > 0) {
-				for (const key in productosEstadoFiltered) {
-					productosFiltered = productosFiltered.filter(
-						(usuario) => productosEstadoFiltered[key].indexOf(usuario) !== -1,
-					);
-				}
-			}
-		} else if (estadoProductoFilter.length > 0) {
-			for (const key in productosEstadoFiltered) {
-				if (productosFiltered.length === 0) productosFiltered = productosEstadoFiltered[key];
-				else {
-					productosFiltered = productosFiltered.filter(
-						(usuario) => productosEstadoFiltered[key].indexOf(usuario) !== -1,
-					);
-				}
-			}
-		} else {
-			productosFiltered = productosGuardados;
+	useEffect(() => {
+		if (!loading && !error) {
+			setProductos(data.getInventario.productos);
+			setCantidadTotal(data.getInventario.totalProductos);
 		}
-
-		if (searchQuery === '') setProductos(productosFiltered);
-		else
-			setProductos(
-				productosFiltered.filter((producto) =>
-					producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()),
-				),
-			);
-	};
+	}, [data]);
 
 	const handleChangeTipoFilter = (e) => {
 		const { id, checked } = e.target;
@@ -185,74 +87,74 @@ export default function Inventario() {
 		}
 	};
 
+	const handleChangeCantidadFilter = (e) => {
+		const { id, checked } = e.target;
+
+		if (checked) {
+			setCantidadProductoFilter((prev) => {
+				return [...prev, id];
+			});
+		} else {
+			setCantidadProductoFilter((prev) => {
+				return prev.filter((item) => {
+					return id !== item;
+				});
+			});
+		}
+	};
+
 	const handleFilter = (e) => {
 		e.preventDefault();
 
-		filterProductos();
-
 		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
+
+		refetch({
+			page: paginacionParams.paginaActiva,
+			limit: paginacionParams.elementosPorPagina,
+			search: searchQuery,
+			tipoFilter: tipoProductoFilter,
+			estadoFilter: estadoProductoFilter,
+			cantidadFilter: cantidadProductoFilter,
+		});
 	};
 
 	const handleSearchBar = (e) => {
 		e.preventDefault();
 
+		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
 		setSearchQuery(searchRef.current.value);
+
+		refetch({
+			page: paginacionParams.paginaActiva,
+			limit: paginacionParams.elementosPorPagina,
+			search: searchRef.current.value,
+			tipoFilter: tipoProductoFilter,
+			estadoFilter: estadoProductoFilter,
+			cantidadFilter: cantidadProductoFilter,
+		});
 	};
 
-	const cleanFormData = () => {
-		setShowProductoModal(false);
-		setNombreProducto('');
-		setDetalleProducto('');
-		setCategoriaProducto('');
-		setCantidadProducto(0);
-		setEstadoProducto(false);
-	};
-
-	const handleAgregarProducto = (e) => {
+	const handleUpdateEstado = (e, producto) => {
 		e.preventDefault();
 
-		setUltimaIdGuardada((prev) => prev + 1);
-
-		const nuevoProducto = {
-			id: ultimaIdGuardada + 1,
-			nombre: nombreProducto,
-			detalle: detalleProducto,
-			categoria: categoriaProducto,
-			cantidad: parseInt(cantidadProducto),
-			disponible: estadoProducto,
-		};
-
-		setProductosGuardados((prev) => [...prev, nuevoProducto]);
-		cleanFormData();
+		updP({
+			variables: {
+				id: producto.id,
+				disponibilidad: !producto.disponibilidad,
+			},
+		});
 	};
 
-	const handleUpdateEstado = (e, idProducto) => {
+	const handleUpdateCantidad = (e, producto) => {
 		e.preventDefault();
 
-		const productosNuevo = productosGuardados.map((producto) => {
-			if (producto.id === idProducto) {
-				return { ...producto, disponible: !producto.disponible };
-			} else {
-				return producto;
-			}
+		updP({
+			variables: {
+				id: producto.id,
+				cantidad: parseInt(cantidadProducto),
+			},
 		});
 
-		setProductosGuardados(productosNuevo);
-	};
-
-	const handleUpdateCantidad = (e, idProducto) => {
-		e.preventDefault();
-
-		const productosNuevo = productosGuardados.map((producto) => {
-			if (producto.id === idProducto) {
-				return { ...producto, cantidad: cantidadProducto };
-			} else {
-				return producto;
-			}
-		});
-
-		setProductosGuardados(productosNuevo);
-		setCantidadProducto(0);
 		setEditandoCantidad(false);
 	};
 
@@ -261,66 +163,15 @@ export default function Inventario() {
 
 		setShowProductoModal(true);
 		setEditandoProducto(true);
-		setIdProductoEditar(producto.id);
-		setNombreProducto(producto.nombre);
-		setDetalleProducto(producto.detalle);
-		setCategoriaProducto(producto.categoria);
-		setCantidadProducto(producto.cantidad);
-		setEstadoProducto(producto.disponible);
-	};
-
-	const hadleUpdateProducto = (e, idProducto) => {
-		e.preventDefault();
-
-		setUltimaIdGuardada((prev) => prev + 1);
-
-		const nuevoProducto = {
-			id: ultimaIdGuardada + 1,
-			nombre: nombreProducto,
-			detalle: detalleProducto,
-			categoria: categoriaProducto,
-			cantidad: cantidadProducto,
-			disponible: estadoProducto,
-		};
-
-		const productosNuevo = productosGuardados.map((producto) => {
-			if (producto.id === idProducto) {
-				return nuevoProducto;
-			} else {
-				return producto;
-			}
+		setProductoEditar({
+			id: producto.id,
+			nombre: producto.nombre,
+			detalle: producto.detalle,
+			categoria: producto.categoria,
+			cantidad: producto.cantidad,
+			disponibilidad: producto.disponibilidad,
 		});
-
-		setProductosGuardados(productosNuevo);
-		cleanFormData();
 	};
-
-	useEffect(() => {
-		setProductosPorPagina(
-			productos.slice(
-				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
-				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
-			),
-		);
-	}, [productos]);
-
-	useEffect(() => {
-		setProductosPorPagina(
-			productos.slice(
-				paginacionParams.elementosPorPagina * (paginacionParams.paginaActiva - 1),
-				paginacionParams.elementosPorPagina * paginacionParams.paginaActiva,
-			),
-		);
-	}, [paginacionParams.paginaActiva]);
-
-	useEffect(() => {
-		filterProductos();
-	}, [productosGuardados]);
-
-	useEffect(() => {
-		filterProductos();
-		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
-	}, [searchQuery]);
 
 	return (
 		<Layout>
@@ -354,9 +205,6 @@ export default function Inventario() {
 				<Col className='mt-2'>
 					<a
 						onClick={() => {
-							if (editandoProducto) {
-								cleanFormData();
-							}
 							setShowProductoModal(true);
 							setEditandoProducto(false);
 						}}
@@ -367,112 +215,13 @@ export default function Inventario() {
 					</a>
 				</Col>
 			</Row>
-			<Modal
-				show={showProductoModal}
-				onHide={() => setShowProductoModal(false)}
-				size='lg'
-				aria-labelledby='contained-modal-title-vcenter'
-				centered
-			>
-				<Modal.Header closeButton>
-					<Modal.Title
-						id='contained-modal-title-vcenter'
-						style={{ color: 'var(--alt-text-color)' }}
-					>
-						{editandoProducto && 'Editar Producto'}
-						{!editandoProducto && 'Agregar Producto'}
-					</Modal.Title>
-				</Modal.Header>
-
-				<Form
-					onSubmit={(e) => {
-						if (editandoProducto) hadleUpdateProducto(e, idProductoEditar);
-						else handleAgregarProducto(e);
-					}}
-				>
-					<Modal.Body>
-						<Row>
-							<Col sm md>
-								<Form.Group className='mb-3' controlId='formNombre'>
-									<Form.Label>Nombre</Form.Label>
-									<Form.Control
-										type='text'
-										value={nombreProducto}
-										onChange={(e) => setNombreProducto(e.target.value)}
-										placeholder='Nombre...'
-										className={styles['text-form']}
-										required
-									/>
-								</Form.Group>
-							</Col>
-							<Col sm md>
-								<Form.Group className='mb-3' controlId='formDetalle'>
-									<Form.Label>Detalle</Form.Label>
-									<Form.Control
-										type='text'
-										value={detalleProducto}
-										onChange={(e) => setDetalleProducto(e.target.value)}
-										placeholder='Detalles...'
-										className={styles['text-form']}
-										required
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm md>
-								<Form.Group className='mb-3' controlId='formCategoria'>
-									<Form.Label>Categoría</Form.Label>
-									<Form.Control
-										required
-										as='select'
-										className={styles['form-categoria-dropdown']}
-										value={categoriaProducto}
-										onChange={(e) => setCategoriaProducto(e.target.value)}
-									>
-										<option value=''>Seleccione una categoría</option>
-										<option value='materiales'>Material</option>
-										<option value='herramientas'>Herramienta</option>
-										<option value='equipos'>Equipo</option>
-									</Form.Control>
-								</Form.Group>
-							</Col>
-							<Col sm md>
-								<Form.Group className='mb-3' controlId='formCantidad'>
-									<Form.Label>Cantidad</Form.Label>
-									<Form.Control
-										type='number'
-										min='0'
-										value={cantidadProducto}
-										onChange={(e) => setCantidadProducto(e.target.value)}
-										className={styles['form-categoria-dropdown']}
-										required
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<Form.Check
-									type='switch'
-									id='estado-producto'
-									label='¿Dar producto de alta?'
-									checked={estadoProducto}
-									onChange={() => {
-										setEstadoProducto(!estadoProducto);
-									}}
-								></Form.Check>
-							</Col>
-							<Col>
-								<Button type='submit' className={styles['custom-button']}>
-									{editandoProducto && 'Editar'}
-									{!editandoProducto && 'Agregar'}
-								</Button>
-							</Col>
-						</Row>
-					</Modal.Body>
-				</Form>
-			</Modal>
+			<AddProducto
+				showProductoModal={showProductoModal}
+				setShowProductoModal={setShowProductoModal}
+				editandoProducto={editandoProducto}
+				productoEditar={productoEditar}
+				refetch={refetch}
+			/>
 			<Row>
 				<Col xs={12} md={2} className={styles['filter-selection']}>
 					<p className='h5'>Tipo de Producto</p>
@@ -538,24 +287,24 @@ export default function Inventario() {
 						</label>
 						<label
 							className={`${
-								estadoProductoFilter.includes('cantidad_alta')
+								cantidadProductoFilter.includes('cantidad_alta')
 									? styles['filter-checkbox-checked']
 									: styles['filter-checkbox']
 							}`}
 							htmlFor='cantidad_alta'
 						>
-							<input type='checkbox' id='cantidad_alta' onChange={handleChangeEstadoFilter} />
+							<input type='checkbox' id='cantidad_alta' onChange={handleChangeCantidadFilter} />
 							<span>Cantidad aceptable</span>
 						</label>
 						<label
 							className={`${
-								estadoProductoFilter.includes('cantidad_baja')
+								cantidadProductoFilter.includes('cantidad_baja')
 									? styles['filter-checkbox-checked']
 									: styles['filter-checkbox']
 							}`}
 							htmlFor='cantidad_baja'
 						>
-							<input type='checkbox' id='cantidad_baja' onChange={handleChangeEstadoFilter} />
+							<input type='checkbox' id='cantidad_baja' onChange={handleChangeCantidadFilter} />
 							<span>Cantidad baja</span>
 						</label>
 					</div>
@@ -566,7 +315,7 @@ export default function Inventario() {
 				<Col xs={12} md={10}>
 					<InventarioTable
 						productos={productos}
-						productosPorPagina={productosPorPagina}
+						cantidadTotal={cantidadTotal}
 						paginacionParams={paginacionParams}
 						setPaginacionParams={setPaginacionParams}
 						editandoCantidad={editandoCantidad}
