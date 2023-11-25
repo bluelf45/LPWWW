@@ -25,6 +25,7 @@ export default function AddProducto({
 		categoria: '',
 		cantidad: 0,
 		disponibilidad: false,
+		image: null,
 	});
 	const [idProductoEditar, setIdProductoEditar] = useState('');
 
@@ -35,11 +36,34 @@ export default function AddProducto({
 			categoria: '',
 			cantidad: 0,
 			disponibilidad: false,
+			image: null,
 		});
 	};
 
-	const handleAgregarProducto = (e) => {
+	const getBase64 = (file) => {
+		return new Promise((resolve) => {
+			const reader = new FileReader();
+
+			reader.readAsDataURL(file);
+
+			reader.onload = () => {
+				resolve(reader.result);
+			};
+		});
+	};
+
+	const handleAgregarProducto = async (e) => {
 		e.preventDefault();
+
+		let imageBase64;
+
+		if (formState.image === null) {
+			imageBase64 = '';
+		} else {
+			imageBase64 = await getBase64(formState.image);
+		}
+
+		console.log('outside async', imageBase64);
 
 		addP({
 			variables: {
@@ -48,7 +72,10 @@ export default function AddProducto({
 				categoria: formState.categoria,
 				cantidad: formState.cantidad,
 				disponibilidad: formState.disponibilidad,
-				image: '',
+				image: imageBase64,
+			},
+			onCompleted: () => {
+				refetch();
 			},
 		});
 
@@ -56,19 +83,26 @@ export default function AddProducto({
 		cleanFormData();
 	};
 
-	const hadleUpdateProducto = (e) => {
+	const hadleUpdateProducto = async (e) => {
 		e.preventDefault();
 
+		let variables = {
+			id: idProductoEditar,
+			nombre: formState.nombre,
+			detalle: formState.detalle,
+			categoria: formState.categoria,
+			cantidad: formState.cantidad,
+			disponibilidad: formState.disponibilidad,
+		};
+
+		if (formState.image !== null) {
+			const imageBase64 = await getBase64(formState.image);
+			console.log(imageBase64);
+			variables = { ...variables, image: imageBase64 };
+		}
+
 		updP({
-			variables: {
-				id: idProductoEditar,
-				nombre: formState.nombre,
-				detalle: formState.detalle,
-				categoria: formState.categoria,
-				cantidad: formState.cantidad,
-				disponibilidad: formState.disponibilidad,
-				image: '',
-			},
+			variables,
 			onCompleted: () => {
 				refetch();
 			},
@@ -81,7 +115,7 @@ export default function AddProducto({
 	useEffect(() => {
 		if (editandoProducto) {
 			const { id, ...rest } = productoEditar;
-			setFormState(rest);
+			setFormState({ ...rest, image: null });
 			setIdProductoEditar(id);
 		} else {
 			cleanFormData();
@@ -172,6 +206,17 @@ export default function AddProducto({
 							</Form.Group>
 						</Col>
 					</Row>
+					<Row>
+						<Form.Group controlId='formImage'>
+							<Form.Label>Imagen</Form.Label>
+							<Form.Control
+								type='file'
+								onChange={(e) => setFormState({ ...formState, image: e.target.files[0] })}
+								accept='.png,.jpg,.jpeg,.webp'
+							/>
+						</Form.Group>
+					</Row>
+					<br />
 					<Row>
 						<Col>
 							<Form.Check

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Row, Col, Form, Table } from 'react-bootstrap';
+import { Row, Col, Form, Table, Image, Modal } from 'react-bootstrap';
 import { PaginationControl } from 'react-bootstrap-pagination-control';
 import {
 	FaImage,
@@ -29,6 +29,7 @@ export default function InventarioTable({
 	const [idProductoEditarCantidad, setIdProductoEditarCantidad] = useState();
 	const [itemHoveringAlert, setItemHoveringAlert] = useState('');
 	const [itemHoveringEditar, setItemHoveringEditar] = useState('');
+	const [showModalImage, setShowModalImage] = useState(false);
 
 	return (
 		<>
@@ -49,7 +50,32 @@ export default function InventarioTable({
 						productos.map((producto) => (
 							<tr key={producto.id}>
 								<td align='center' className='align-middle'>
-									<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+									{producto.image === '' && (
+										<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+									)}
+									{producto.image !== '' && (
+										<>
+											<Image
+												style={{ width: '2rem', cursor: 'pointer' }}
+												src={producto.image}
+												onClick={() => setShowModalImage(true)}
+												rounded
+											/>
+
+											<Modal
+												show={showModalImage}
+												onHide={() => setShowModalImage(false)}
+												size='sm'
+												aria-labelledby='contained-modal-title-vcenter'
+												centered
+											>
+												<Modal.Header closeButton>{producto.nombre}</Modal.Header>
+												<Modal.Body className='text-center'>
+													<Image src={producto.image} fluid />
+												</Modal.Body>
+											</Modal>
+										</>
+									)}
 								</td>
 								<td className='align-middle'>
 									{producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}
