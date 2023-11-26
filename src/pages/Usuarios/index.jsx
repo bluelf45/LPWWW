@@ -6,79 +6,15 @@ import { validate, format } from 'rut.js';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
 import UsuariosTable from './UsuariosTable';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_USUARIOS, UPD_USUARIO } from './UsuariosNodes';
 
 export default function Usuarios() {
 	const [tipoUsuarioFilter, setTipoUsuarioFilter] = useState([]);
 	const [estadoUsuarioFilter, setEstadoUsuarioFilter] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 
-	const [usuariosGuardados, setUsuariosGuardados] = useState([
-		{
-			tipo: 'alumno',
-			rut: '21.234.123-2',
-			apellido1: 'González',
-			apellido2: 'Gómez',
-			nombre: 'María',
-			carrera: 'Ingeniería Civil Informática',
-			telefono: '+569 1234 1234',
-			correo: 'maria.gonzalezz@usm.cl',
-			disponible: true,
-			moroso: true,
-			bloqueado: false,
-		},
-		{
-			tipo: 'coordinador',
-			rut: '13.221.145-0',
-			apellido1: 'Robert',
-			apellido2: 'Robert',
-			nombre: 'Roberto',
-			telefono: '+569 5678 5678',
-			departamento: 'Informática',
-			correo: 'roberto.robert@usm.cl',
-			disponible: true,
-			moroso: false,
-			bloqueado: false,
-		},
-		{
-			tipo: 'panolero',
-			rut: '19.221.145-0',
-			apellido1: 'Pérez',
-			apellido2: 'Jiménez',
-			nombre: 'Juan',
-			telefono: '+569 5678 5678',
-			correo: 'juan.perez@usm.cl',
-			disponible: true,
-			moroso: false,
-			bloqueado: true,
-		},
-		{
-			tipo: 'jefeCarrera',
-			rut: '12.123.123-2',
-			apellido1: 'González',
-			apellido2: 'González',
-			nombre: 'Juan',
-			telefono: '+569 5678 5678',
-			departamento: 'Informática',
-			correo: 'juan.gonzalez@usm.cl',
-			disponible: true,
-			moroso: false,
-			bloqueado: false,
-		},
-		{
-			tipo: 'docente',
-			rut: '10.456.456-1',
-			apellido1: 'Pérez',
-			apellido2: 'González',
-			nombre: 'Patricio',
-			telefono: '+569 5678 5678',
-			departamento: 'Informática',
-			correo: 'patricio.perez@usm.cl',
-			disponible: false,
-			moroso: false,
-			bloqueado: false,
-		},
-	]);
-	const [usuarios, setUsuarios] = useState(usuariosGuardados);
+	const [usuarios, setUsuarios] = useState([]);
 
 	const [paginacionParams, setPaginacionParams] = useState({
 		elementosPorPagina: 8,
@@ -108,16 +44,35 @@ export default function Usuarios() {
 	const [disponibleUsuarioForm, setDisponibleUsuarioForm] = useState(false);
 	const [morosoUsuarioForm, setMorosoUsuarioForm] = useState(false);
 	const [bloqueadoUsuarioForm, setBloqueadoUsuarioForm] = useState(false);
+	const [cantidadTotal, setCantidadTotal] = useState(0);
 
 	const searchRef = useRef();
 
 	const { tipoUsuario } = useContext(AuthContext);
 
+	const [updU, { dataUpdU, loadingUpdU, errorUpdU }] = useMutation(UPD_USUARIO, {
+		refetchQueries: [GET_USUARIOS, 'getUsuarios'],
+	});
+
+	const { loading, error, data, refetch } = useQuery(GET_USUARIOS, {
+		variables: {
+			page: paginacionParams.paginaActiva,
+			limit: paginacionParams.elementosPorPagina,
+		},
+	});
+
+	useEffect(() => {
+		if (!loading && !error) {
+			setUsuarios(data.getUsuarios.usuarios);
+			setCantidadTotal(data.getUsuarios.totalUsuarios);
+		}
+	}, [data]);
+
 	const filterUsuarios = () => {
 		const usuariosTipoFiltered = [];
 
 		tipoUsuarioFilter.forEach((filtro) => {
-			usuariosGuardados.forEach((usuario) => {
+			usuarios.forEach((usuario) => {
 				if (usuario.tipo === filtro && !usuariosTipoFiltered.includes(usuario))
 					usuariosTipoFiltered.push(usuario);
 			});
@@ -126,7 +81,7 @@ export default function Usuarios() {
 		const usuariosEstadoFiltered = {};
 
 		estadoUsuarioFilter.forEach((filtro) => {
-			usuariosGuardados.forEach((usuario) => {
+			usuarios.forEach((usuario) => {
 				let cumpleFiltro = false;
 				let key;
 
@@ -199,7 +154,7 @@ export default function Usuarios() {
 				}
 			}
 		} else {
-			usuariosFiltered = usuariosGuardados;
+			usuariosFiltered = usuarios;
 		}
 
 		const searchQueryFormated = searchQuery
@@ -296,7 +251,7 @@ export default function Usuarios() {
 		else if (tipoUsuarioForm !== 'panolero')
 			nuevoUsuario = { ...nuevoUsuario, departamento: departamentoUsuarioForm };
 
-		setUsuariosGuardados((prev) => [...prev, nuevoUsuario]);
+		setUsuarios((prev) => [...prev, nuevoUsuario]);
 		cleanFormData();
 	};
 
@@ -321,7 +276,7 @@ export default function Usuarios() {
 		else if (tipoUsuarioForm !== 'panolero')
 			nuevoUsuario = { ...nuevoUsuario, departamento: departamentoUsuarioForm };
 
-		const usuariosNuevos = usuariosGuardados.map((usuario) => {
+		const usuariosNuevos = usuarios.map((usuario) => {
 			if (usuario.rut === rutUsuario) {
 				return nuevoUsuario;
 			} else {
@@ -329,41 +284,67 @@ export default function Usuarios() {
 			}
 		});
 
-		setUsuariosGuardados(usuariosNuevos);
+		setUsuarios(usuariosNuevos);
 		cleanFormData();
 	};
 
 	const handleUpdateDisponibilidad = (e, rutUsuario) => {
 		e.preventDefault();
 
-		const usuariosNuevos = usuariosGuardados.map((usuario) => {
+		const usuariosNuevos = usuarios.map((usuario) => {
 			if (usuario.rut === rutUsuario) return { ...usuario, disponible: !usuario.disponible };
 			else return usuario;
 		});
 
-		setUsuariosGuardados(usuariosNuevos);
+		setUsuarios(usuariosNuevos);
+		updU({
+			variables: {
+				id: rutUsuario,
+				input: {
+					disponibilidad: !usuarios.find((usuario) => usuario.rut === rutUsuario).disponible,
+				},
+			},
+		});
 	};
 
 	const handleUpdateMoroso = (e, rutUsuario) => {
 		e.preventDefault();
 
-		const usuariosNuevos = usuariosGuardados.map((usuario) => {
+		const usuariosNuevos = usuarios.map((usuario) => {
 			if (usuario.rut === rutUsuario) return { ...usuario, moroso: !usuario.moroso };
 			else return usuario;
 		});
 
-		setUsuariosGuardados(usuariosNuevos);
+		setUsuarios(usuariosNuevos);
+
+		updU({
+			variables: {
+				id: rutUsuario,
+				input: {
+					moroso: !usuarios.find((usuario) => usuario.rut === rutUsuario).moroso,
+				},
+			},
+		});
 	};
 
 	const handleUpdateBloqueado = (e, rutUsuario) => {
 		e.preventDefault();
 
-		const usuariosNuevos = usuariosGuardados.map((usuario) => {
+		const usuariosNuevos = usuarios.map((usuario) => {
 			if (usuario.rut === rutUsuario) return { ...usuario, bloqueado: !usuario.bloqueado };
 			else return usuario;
 		});
 
-		setUsuariosGuardados(usuariosNuevos);
+		setUsuarios(usuariosNuevos);
+
+		updU({
+			variables: {
+				id: rutUsuario,
+				input: {
+					bloqueado: !usuarios.find((usuario) => usuario.rut === rutUsuario).bloqueado,
+				},
+			},
+		});
 	};
 
 	const handleUpdateUsuarioButtonPressed = (e, usuario) => {
@@ -401,6 +382,11 @@ export default function Usuarios() {
 		filterUsuarios();
 
 		setPaginacionParams((prev) => ({ ...prev, paginaActiva: 1 }));
+
+		refetch({
+			page: 1,
+			limit: paginacionParams.elementosPorPagina,
+		});
 	};
 
 	const handleChangeTipoFilter = (e) => {
@@ -439,6 +425,11 @@ export default function Usuarios() {
 		e.preventDefault();
 
 		setSearchQuery(searchRef.current.value);
+
+		refetch({
+			page: 1,
+			limit: paginacionParams.elementosPorPagina,
+		});
 	};
 
 	useEffect(() => {
@@ -452,7 +443,7 @@ export default function Usuarios() {
 
 	useEffect(() => {
 		filterUsuarios();
-	}, [usuariosGuardados]);
+	}, [usuarios]);
 
 	useEffect(() => {
 		filterUsuarios();
@@ -879,6 +870,7 @@ export default function Usuarios() {
 					<UsuariosTable
 						tipoUsuario={tipoUsuario}
 						usuarios={usuarios}
+						cantidadTotal={cantidadTotal}
 						usuariosPorPagina={usuariosPorPagina}
 						paginacionParams={paginacionParams}
 						setPaginacionParams={setPaginacionParams}

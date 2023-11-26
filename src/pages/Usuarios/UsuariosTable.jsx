@@ -7,6 +7,7 @@ import styles from './index.module.css';
 export default function UsuariosTable({
 	tipoUsuario,
 	usuarios,
+	cantidadUsuarios,
 	usuariosPorPagina,
 	paginacionParams,
 	setPaginacionParams,
@@ -154,7 +155,7 @@ export default function UsuariosTable({
 			<PaginationControl
 				page={paginacionParams.paginaActiva}
 				between={4}
-				total={usuarios.length}
+				total={cantidadUsuarios}
 				limit={paginacionParams.elementosPorPagina}
 				changePage={(page) => {
 					setPaginacionParams((prev) => ({ ...prev, paginaActiva: page }));
