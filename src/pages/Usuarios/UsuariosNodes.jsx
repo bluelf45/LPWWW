@@ -1,8 +1,24 @@
 import { gql } from '@apollo/client';
 
 const GET_USUARIOS = gql`
-	query getUsuarios($page: Int!, $limit: Int = 1) {
-		getUsuarios(page: $page, limit: $limit) {
+	query getUsuarios(
+		$page: Int!
+		$limit: Int!
+		$search: String!
+		$tipoFilter: [String]!
+		$disponibilidadFilter: [String]!
+		$morosoFilter: [String]!
+		$bloqueadoFilter: [String]!
+	) {
+		getUsuarios(
+			page: $page
+			limit: $limit
+			search: $search
+			tipoFilter: $tipoFilter
+			disponibilidadFilter: $disponibilidadFilter
+			morosoFilter: $morosoFilter
+			bloqueadoFilter: $bloqueadoFilter
+		) {
 			usuarios {
 				id
 				rut
@@ -23,29 +39,37 @@ const GET_USUARIOS = gql`
 	}
 `;
 
-const GET_USUARIO = gql`
-	query getUsuario($id: ID!) {
-		getUsuario(id: $id) {
-			id
-			rut
-			nombre
-			apellido1
-			apellido2
-			carrera
-			correo
-			telefono
-			tipoUsuario
-			contrasena
-			moroso
-			bloqueado
-			disponibilidad
-		}
-	}
-`;
-
 const ADD_USUARIO = gql`
-	mutation addUsuario($input: UsuarioInput!) {
-		addUsuario(input: $input) {
+	mutation addUsuario(
+		$rut: String!
+		$nombre: String!
+		$apellido1: String!
+		$apellido2: String!
+		$carrera: String!
+		$correo: String!
+		$telefono: String!
+		$contrasena: String!
+		$tipoUsuario: String!
+		$moroso: Boolean!
+		$bloqueado: Boolean!
+		$disponibilidad: Boolean!
+	) {
+		addUsuario(
+			input: {
+				rut: $rut
+				nombre: $nombre
+				apellido1: $apellido1
+				apellido2: $apellido2
+				carrera: $carrera
+				correo: $correo
+				telefono: $telefono
+				contrasena: $contrasena
+				tipoUsuario: $tipoUsuario
+				moroso: $moroso
+				bloqueado: $bloqueado
+				disponibilidad: $disponibilidad
+			}
+		) {
 			id
 			rut
 			nombre
@@ -64,8 +88,38 @@ const ADD_USUARIO = gql`
 `;
 
 const UPD_USUARIO = gql`
-	mutation updUsuario($id: ID!, $input: UsuarioInput!) {
-		updUsuario(id: $id, input: $input) {
+	mutation updUsuario(
+		$id: ID!
+		$rut: String
+		$nombre: String
+		$apellido1: String
+		$apellido2: String
+		$carrera: String
+		$correo: String
+		$telefono: String
+		$contrasena: String
+		$tipoUsuario: String
+		$moroso: Boolean
+		$bloqueado: Boolean
+		$disponibilidad: Boolean
+	) {
+		updUsuario(
+			id: $id
+			input: {
+				rut: $rut
+				nombre: $nombre
+				apellido1: $apellido1
+				apellido2: $apellido2
+				carrera: $carrera
+				correo: $correo
+				telefono: $telefono
+				contrasena: $contrasena
+				tipoUsuario: $tipoUsuario
+				moroso: $moroso
+				bloqueado: $bloqueado
+				disponibilidad: $disponibilidad
+			}
+		) {
 			id
 			rut
 			nombre
@@ -83,12 +137,4 @@ const UPD_USUARIO = gql`
 	}
 `;
 
-const DEL_USUARIO = gql`
-	mutation delUsuario($id: ID!) {
-		delUsuario(id: $id) {
-			message
-		}
-	}
-`;
-
-export { GET_USUARIOS, GET_USUARIO, ADD_USUARIO, UPD_USUARIO, DEL_USUARIO };
+export { GET_USUARIOS, ADD_USUARIO, UPD_USUARIO };
