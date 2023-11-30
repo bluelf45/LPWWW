@@ -16,24 +16,21 @@ export default function Forget() {
 	const [errorPassword, setErrorPassword] = useState('');
 	const [rutError, setRutError] = useState('');
 	const [errorMatchPassword, setErrorMatchPassword] = useState('');
-	const [check, setCheck] = useState(Boolean);
 
 	// eslint-disable-next-line no-unused-vars
 	const [updP, { data, loading, error }] = useMutation(UPD_PASS);
 	const router = useRouter();
 
 	function verificar(RUT, password, newPasword, confirmPassword) {
-		setCheck(true);
+		setRutError('');
+		setErrorMatchPassword('');
+		setErrorPassword('');
+
 		if (validate(RUT) === false) {
-			setCheck(false);
 			setRutError('El Rut indicado no existe');
-		}
-		if (newPasword !== confirmPassword) {
-			setCheck(false);
+		} else if (newPasword !== confirmPassword) {
 			setErrorMatchPassword('Las contraseñas no coinciden');
-		}
-		console.log(check);
-		if (check === true) {
+		} else {
 			updP({
 				variables: {
 					rut: RUT,

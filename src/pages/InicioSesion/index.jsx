@@ -17,7 +17,15 @@ export default function InicioSesion() {
 	const [passwordError, setPasswordError] = useState('');
 
 	// eslint-disable-next-line no-unused-vars
-	const [loginU, { data }] = useLazyQuery(LOGIN_USER);
+	const [loginU, { data, loading, error }] = useLazyQuery(LOGIN_USER, {
+		variables: {
+			rut: usuario,
+			contrasena: password,
+		},
+		onCompleted: (data) => {
+			handleLogin(data.loginUsuario.tipoUsuario);
+		},
+	});
 
 	const handleLogin = (tipoUsuario) => {
 		if (tipoUsuario === 'error') {
@@ -29,19 +37,11 @@ export default function InicioSesion() {
 		}
 	};
 
-	const verificar = (RUT, password) => {
-		if (validate(RUT) === false) {
+	const verificar = () => {
+		if (validate(usuario) === false) {
 			setRutError('El Rut indicado no existe');
 		} else {
-			loginU({
-				variables: {
-					rut: RUT,
-					contrasena: password,
-				},
-				onCompleted: (data) => {
-					handleLogin(data.loginUsuario.tipoUsuario);
-				},
-			});
+			loginU();
 		}
 	};
 
@@ -80,7 +80,7 @@ export default function InicioSesion() {
 					Cambiar tu Contraseña
 				</Link>
 				<div className={styles['login-container']}>
-					<div className={styles['custom-button']} onClick={() => verificar(usuario, password)}>
+					<div className={styles['custom-button']} onClick={() => verificar()}>
 						Iniciar sesión
 					</div>
 				</div>
