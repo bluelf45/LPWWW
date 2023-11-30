@@ -1,64 +1,47 @@
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/components/SessionContext';
+import Link from 'next/link';
 import styles from './index.module.css';
 import { FaUser, FaLock, FaBookOpenReader } from 'react-icons/fa6';
+import { useLazyQuery } from '@apollo/client';
+import { LOGIN_USER } from './graphql';
+import { validate, format } from 'rut.js';
 
 export default function InicioSesion() {
-	const { setAuthenticated, setTipoUsuario, setUsername } = useContext(AuthContext);
+	const { setAuthenticated, setTipoUsuario } = useContext(AuthContext);
 	const [usuario, setUsuario] = useState('');
 	const [password, setPassword] = useState('');
 	const router = useRouter();
-	const [error, setError] = useState('');
+	const [rutError, setRutError] = useState('');
+	const [passwordError, setPasswordError] = useState('');
 
-	const usuariosGuardados = [
-		{
-			usuario: 'panolero',
-			password: 'panolero',
-			tipoUsuario: 'panolero',
-		},
-		{
-			usuario: 'coordinador',
-			password: 'coordinador',
-			tipoUsuario: 'coordinador',
-		},
-		{
-			usuario: 'jefeCarrera',
-			password: 'jefeCarrera',
-			tipoUsuario: 'jefeCarrera',
-		},
-		{
-			usuario: 'alumno',
-			password: 'alumno',
-			tipoUsuario: 'alumno',
-		},
-		{
-			usuario: 'docente',
-			password: 'docente',
-			tipoUsuario: 'docente',
-		},
-		{
-			usuario: 'Juanito.Perez',
-			password: '1234',
-			tipoUsuario: 'alumno',
-		},
-	];
+	// eslint-disable-next-line no-unused-vars
+	const [loginU, { data }] = useLazyQuery(LOGIN_USER);
 
 	const handleLogin = (tipoUsuario) => {
-		setAuthenticated(true);
-		setTipoUsuario(tipoUsuario);
-		setUsername(usuario);
-		router.push('/Home');
+		if (tipoUsuario === 'error') {
+			setPasswordError('Contraseña y/o RUT Incorrecto');
+		} else {
+			setAuthenticated(true);
+			setTipoUsuario(tipoUsuario);
+			router.push('/Home');
+		}
 	};
 
-	const verificar = (usuario, password) => {
-		const obtenerUsuario = usuariosGuardados.find(
-			(obj) => obj.usuario === usuario && obj.password === password,
-		);
-		if (obtenerUsuario !== undefined) {
-			handleLogin(obtenerUsuario.tipoUsuario);
+	const verificar = (RUT, password) => {
+		if (validate(RUT) === false) {
+			setRutError('El Rut indicado no existe');
 		} else {
-			setError('Nombre de Usuario o Contraseña Incorrectos.');
+			loginU({
+				variables: {
+					rut: RUT,
+					contrasena: password,
+				},
+				onCompleted: (data) => {
+					handleLogin(data.loginUsuario.tipoUsuario);
+				},
+			});
 		}
 	};
 
@@ -75,10 +58,11 @@ export default function InicioSesion() {
 						<input
 							value={usuario}
 							type='text'
-							placeholder='Nombre De Usuario'
-							onChange={(e) => setUsuario(e.target.value)}
+							placeholder='RUT'
+							onChange={(e) => setUsuario(format(e.target.value))}
 						></input>
 					</div>
+					{rutError && <p className={styles['error-text']}>{rutError}</p>}
 				</div>
 				<div className={styles.inputs}>
 					<div className={styles.input}>
@@ -90,53 +74,17 @@ export default function InicioSesion() {
 							onChange={(e) => setPassword(e.target.value)}
 						></input>
 					</div>
-					{error && (
-						<p
-							style={{
-								color: 'var(--red)',
-								fontSize: '0.86rem',
-								margin: '0rem 0rem',
-								border: 'none',
-							}}
-						>
-							{error}
-						</p>
-					)}
+					{passwordError && <p className={styles['error-text']}>{passwordError}</p>}
 				</div>
+				<Link href='/Forget' className={styles['forgot-text']}>
+					Cambiar tu Contraseña
+				</Link>
 				<div className={styles['login-container']}>
 					<div className={styles['custom-button']} onClick={() => verificar(usuario, password)}>
 						Iniciar sesión
 					</div>
 				</div>
 			</div>
-			{/*
-			<Row>
-				<Col>
-					<Button className={styles['custom-button']} onClick={() => handleLogin('panolero')}>
-						Pañolero
-					</Button>
-				</Col>
-				<Col>
-					<Button className={styles['custom-button']} onClick={() => handleLogin('coordinador')}>
-						Coordinador
-					</Button>
-				</Col>
-				<Col>
-					<Button className={styles['custom-button']} onClick={() => handleLogin('jefeCarrera')}>
-						Jefe de Carrera
-					</Button>
-				</Col>
-				<Col>
-					<Button className={styles['custom-button']} onClick={() => handleLogin('alumno')}>
-						Alumno
-					</Button>
-				</Col>
-				<Col>
-					<Button className={styles['custom-button']} onClick={() => handleLogin('docente')}>
-						Docente
-					</Button>
-				</Col>
-			</Row> */}
 		</div>
 	);
 }
