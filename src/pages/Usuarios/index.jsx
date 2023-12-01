@@ -173,22 +173,13 @@ export default function Usuarios() {
 		});
 	};
 
-	const handleUpdateMoroso = (e, rutUsuario) => {
+	const handleUpdateMoroso = (e, usuario) => {
 		e.preventDefault();
-
-		const usuariosNuevos = usuarios.map((usuario) => {
-			if (usuario.rut === rutUsuario) return { ...usuario, moroso: !usuario.moroso };
-			else return usuario;
-		});
-
-		setUsuarios(usuariosNuevos);
 
 		updU({
 			variables: {
-				id: rutUsuario,
-				input: {
-					moroso: !usuarios.find((usuario) => usuario.rut === rutUsuario).moroso,
-				},
+				id: usuario.id,
+				moroso: !usuario.moroso,
 			},
 		});
 	};
