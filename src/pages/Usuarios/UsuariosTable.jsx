@@ -7,7 +7,7 @@ import styles from './index.module.css';
 export default function UsuariosTable({
 	tipoUsuario,
 	usuarios,
-	usuariosPorPagina,
+	cantidadTotal,
 	paginacionParams,
 	setPaginacionParams,
 	handleUpdateDisponibilidad,
@@ -36,12 +36,12 @@ export default function UsuariosTable({
 					</tr>
 				</thead>
 				<tbody>
-					{usuariosPorPagina &&
-						usuariosPorPagina.map((usuario) => (
+					{usuarios &&
+						usuarios.map((usuario) => (
 							<tr key={usuario.id}>
 								<td className='align-middle'>
 									{(() => {
-										switch (usuario.tipo) {
+										switch (usuario.tipoUsuario) {
 											case 'jefeCarrera':
 												return 'Jefe de Carrera';
 											case 'coordinador':
@@ -60,23 +60,14 @@ export default function UsuariosTable({
 								<td className='align-middle'>{`${usuario.apellido1} ${usuario.apellido2}`}</td>
 								<td className='align-middle'>
 									{(() => {
-										switch (usuario.tipo) {
-											case 'jefeCarrera':
-											case 'coordinador':
-											case 'docente':
-												return usuario.departamento;
-											case 'alumno':
-												return usuario.carrera;
-											case 'panolero':
-												return '-';
-										}
+										return usuario.tipoUsuario === 'panolero' ? '-' : usuario.carrera;
 									})()}
 								</td>
 								<td className='align-middle'>{usuario.telefono}</td>
 								<td className='align-middle'>{usuario.correo}</td>
 								<td align='center' className='align-middle'>
-									{usuario.disponible && <FaCheck style={{ color: 'green' }} />}
-									{!usuario.disponible && <FaCheck style={{ color: 'gray' }} />}
+									{usuario.disponibilidad && <FaCheck style={{ color: 'green' }} />}
+									{!usuario.disponibilidad && <FaCheck style={{ color: 'gray' }} />}
 								</td>
 								<td align='center' className='align-middle'>
 									{usuario.moroso && <FaUser style={{ color: 'red' }} />}
@@ -102,18 +93,18 @@ export default function UsuariosTable({
 													{['jefeCarrera', 'coordinador'].includes(tipoUsuario) && (
 														<>
 															<a
-																onClick={(e) => handleUpdateDisponibilidad(e, usuario.rut)}
+																onClick={(e) => handleUpdateDisponibilidad(e, usuario)}
 																style={{ cursor: 'pointer' }}
 															>
 																Dar de
-																{usuario.disponible && ' baja'}
-																{!usuario.disponible && ' alta'}
+																{usuario.disponibilidad && ' baja'}
+																{!usuario.disponibilidad && ' alta'}
 															</a>
 															<hr />
 														</>
 													)}
 													<a
-														onClick={(e) => handleUpdateMoroso(e, usuario.rut)}
+														onClick={(e) => handleUpdateMoroso(e, usuario)}
 														style={{ cursor: 'pointer' }}
 													>
 														{usuario.moroso && 'Remover '}
@@ -122,7 +113,7 @@ export default function UsuariosTable({
 													</a>
 													<hr />
 													<a
-														onClick={(e) => handleUpdateBloqueado(e, usuario.rut)}
+														onClick={(e) => handleUpdateBloqueado(e, usuario)}
 														style={{ cursor: 'pointer' }}
 													>
 														{usuario.bloqueado && 'Desbloquear'}
@@ -154,7 +145,7 @@ export default function UsuariosTable({
 			<PaginationControl
 				page={paginacionParams.paginaActiva}
 				between={4}
-				total={usuarios.length}
+				total={cantidadTotal}
 				limit={paginacionParams.elementosPorPagina}
 				changePage={(page) => {
 					setPaginacionParams((prev) => ({ ...prev, paginaActiva: page }));
