@@ -66,8 +66,8 @@ export default function UsuariosTable({
 								<td className='align-middle'>{usuario.telefono}</td>
 								<td className='align-middle'>{usuario.correo}</td>
 								<td align='center' className='align-middle'>
-									{usuario.disponible && <FaCheck style={{ color: 'green' }} />}
-									{!usuario.disponible && <FaCheck style={{ color: 'gray' }} />}
+									{usuario.disponibilidad && <FaCheck style={{ color: 'green' }} />}
+									{!usuario.disponibilidad && <FaCheck style={{ color: 'gray' }} />}
 								</td>
 								<td align='center' className='align-middle'>
 									{usuario.moroso && <FaUser style={{ color: 'red' }} />}
@@ -93,18 +93,18 @@ export default function UsuariosTable({
 													{['jefeCarrera', 'coordinador'].includes(tipoUsuario) && (
 														<>
 															<a
-																onClick={(e) => handleUpdateDisponibilidad(e, usuario.rut)}
+																onClick={(e) => handleUpdateDisponibilidad(e, usuario)}
 																style={{ cursor: 'pointer' }}
 															>
 																Dar de
-																{usuario.disponible && ' baja'}
-																{!usuario.disponible && ' alta'}
+																{usuario.disponibilidad && ' baja'}
+																{!usuario.disponibilidad && ' alta'}
 															</a>
 															<hr />
 														</>
 													)}
 													<a
-														onClick={(e) => handleUpdateMoroso(e, usuario.rut)}
+														onClick={(e) => handleUpdateMoroso(e, usuario)}
 														style={{ cursor: 'pointer' }}
 													>
 														{usuario.moroso && 'Remover '}
@@ -113,7 +113,7 @@ export default function UsuariosTable({
 													</a>
 													<hr />
 													<a
-														onClick={(e) => handleUpdateBloqueado(e, usuario.rut)}
+														onClick={(e) => handleUpdateBloqueado(e, usuario)}
 														style={{ cursor: 'pointer' }}
 													>
 														{usuario.bloqueado && 'Desbloquear'}

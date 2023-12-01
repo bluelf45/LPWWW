@@ -154,21 +154,13 @@ export default function Usuarios() {
 		});
 	};
 
-	const handleUpdateDisponibilidad = (e, rutUsuario) => {
+	const handleUpdateDisponibilidad = (e, usuario) => {
 		e.preventDefault();
 
-		const usuariosNuevos = usuarios.map((usuario) => {
-			if (usuario.rut === rutUsuario) return { ...usuario, disponible: !usuario.disponible };
-			else return usuario;
-		});
-
-		setUsuarios(usuariosNuevos);
 		updU({
 			variables: {
-				id: rutUsuario,
-				input: {
-					disponibilidad: !usuarios.find((usuario) => usuario.rut === rutUsuario).disponible,
-				},
+				id: usuario.id,
+				disponibilidad: !usuario.disponibilidad,
 			},
 		});
 	};
@@ -184,22 +176,12 @@ export default function Usuarios() {
 		});
 	};
 
-	const handleUpdateBloqueado = (e, rutUsuario) => {
+	const handleUpdateBloqueado = (e, usuario) => {
 		e.preventDefault();
-
-		const usuariosNuevos = usuarios.map((usuario) => {
-			if (usuario.rut === rutUsuario) return { ...usuario, bloqueado: !usuario.bloqueado };
-			else return usuario;
-		});
-
-		setUsuarios(usuariosNuevos);
-
 		updU({
 			variables: {
-				id: rutUsuario,
-				input: {
-					bloqueado: !usuarios.find((usuario) => usuario.rut === rutUsuario).bloqueado,
-				},
+				id: usuario.id,
+				bloqueado: !usuario.bloqueado,
 			},
 		});
 	};
