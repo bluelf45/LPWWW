@@ -197,6 +197,19 @@
 	display: block;
 }
 
+.calendar-container {
+	margin: 0.5rem;
+	height: 2.5rem;
+	text-decoration: none;
+	text-wrap: nowrap;
+	cursor: pointer;
+	color: black;
+	padding: 0.4rem;
+	margin: 1rem;
+	border: 0.1rem solid var(--primary-color);
+	border-radius: 1rem;
+}
+
 @media (min-width: 768px) {
 	.filter-selection {
 		border-right: 0.1rem solid var(--alt-text-color);
