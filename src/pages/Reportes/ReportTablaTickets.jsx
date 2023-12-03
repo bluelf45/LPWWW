@@ -33,6 +33,7 @@ export default function ReportTablaTickets({ productos, sort }) {
 				<thead>
 					<tr className={styles['table-head']}>
 						<th>Estado</th>
+						<th>Rut</th>
 						<th>Categoría</th>
 						<th>Nombre</th>
 						<th>Detalle</th>
