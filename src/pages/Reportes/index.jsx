@@ -2,13 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
-import ReportTableStock from './ReportTableStock';
+import ReportTableTicketEspeciales from './ReportTableTicketEspeciales';
 import ReportTableSolicitados from './ReportTableSolicitados';
 import ReportTableDevoluciones from './ReportTableDevoluciones';
-import ReportTablePerdidos from './ReportTablePerdidos';
+import ReportTableTickets from './ReportTablaTickets';
 import { GET_ALL_TICKETS } from './ReportQueries';
 import { useQuery } from '@apollo/client';
-import { GET_PRODUCTOS } from '../Inventario/DocumentNodes';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 export default function Inventario() {
@@ -20,21 +19,18 @@ export default function Inventario() {
 
 	const handleSortToggle = () => {
 		const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-		console.log(newSortOrder);
 		setSortOrder(newSortOrder);
 	};
 
 	const handleChangeStartDate = (e) => {
 		const selectedDate = new Date(e.target.value);
 		const unixTime = selectedDate.getTime();
-		console.log(unixTime);
 		setStartDate(unixTime);
 	};
 
 	const handleChangeEndDate = (e) => {
 		const selectedDate = new Date(e.target.value);
 		const unixTime = selectedDate.getTime();
-		console.log(unixTime);
 		setEndDate(unixTime);
 	};
 
@@ -49,24 +45,8 @@ export default function Inventario() {
 			console.error(`Error! ${error.message}`);
 			return;
 		}
-		console.log(data);
 		setTicketsSolicitados(data?.getAllTickets || []);
 	}, [loading, error, data]);
-
-	const [productosGuardados, setProductosGuardados] = useState([]);
-
-	const { loadingPro, errorPro, dataPro } = useQuery(GET_PRODUCTOS);
-
-	useEffect(() => {
-		if (loadingPro) return;
-
-		if (errorPro) {
-			console.error(`Error! ${error.message}`);
-			return;
-		}
-
-		setProductosGuardados(dataPro?.getProductos || []);
-	}, [loadingPro, errorPro, dataPro]);
 
 	const [masSolicitados, setMasSolicitados] = useState([]);
 
@@ -82,25 +62,19 @@ export default function Inventario() {
 		if (startDate !== undefined && endDate !== undefined) {
 			filteredTickets = [];
 			ticketsSolicitados.forEach((element) => {
-				console.log(element.fechaPrestamo);
-				console.log(startDate, ' > ', element.fechaPrestamo, ' < ', endDate);
 				if (element.fechaPrestamo >= startDate && element.fechaPrestamo <= endDate) {
 					filteredTickets.push(element);
 				}
 			});
 		} else {
-			console.log('no hay fechas');
 			filteredTickets = ticketsSolicitados;
 		}
-
-		console.log(filteredTickets);
 
 		filteredTickets.forEach((element) => {
 			if (!idUsed.includes(element.producto.id)) {
 				const copiedObject = { ...element.producto, vecesPedido: 1 };
 				idUsed.push(element.producto.id);
 				final.push(copiedObject);
-				console.log(copiedObject);
 			} else {
 				const index = idUsed.indexOf(element.producto.id);
 				final[index].vecesPedido += 1;
@@ -110,33 +84,117 @@ export default function Inventario() {
 		setMasSolicitados(final.sort((a, b) => (a.vecesPedido < b.vecesPedido ? 1 : -1)));
 	}, [ticketsSolicitados, startDate, endDate]);
 
-	const devoluciones = useMemo(() => {
+	const [ticketEspecial, setTicketEspecial] = useState([]);
+
+	useMemo(() => {
+		// Todos los tickets especiales
+		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
+			return [];
+		}
+		const final = [];
+
+		let filteredTickets;
+
+		if (startDate !== undefined && endDate !== undefined) {
+			filteredTickets = [];
+			ticketsSolicitados.forEach((element) => {
+				if (element.fechaPrestamo >= startDate && element.fechaPrestamo <= endDate) {
+					filteredTickets.push(element);
+				}
+			});
+		} else {
+			filteredTickets = ticketsSolicitados;
+		}
+
+		filteredTickets.forEach((element) => {
+			if (element.ticketEspecial !== null) {
+				final.push(element);
+			}
+		});
+		setTicketEspecial(final);
+	}, [ticketsSolicitados, startDate, endDate]);
+
+	useMemo(() => {
+		// Todos los tickets especiales
+		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
+			return [];
+		}
+		const final = [];
+		let filteredTickets;
+
+		if (startDate !== undefined && endDate !== undefined) {
+			filteredTickets = [];
+			ticketsSolicitados.forEach((element) => {
+				if (element.fechaPrestamo >= startDate && element.fechaPrestamo <= endDate) {
+					filteredTickets.push(element);
+				}
+			});
+		} else {
+			filteredTickets = ticketsSolicitados;
+		}
+
+		filteredTickets.forEach((element) => {
+			if (element.ticketEspecial !== null) {
+				final.push(element);
+			}
+		});
+
+		setTicketEspecial(final);
+	}, [ticketsSolicitados, startDate, endDate]);
+
+	const [atrasados, setAtrasados] = useState([]);
+
+	useMemo(() => {
 		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
 			return [];
 		}
 		const final = [];
 		ticketsSolicitados.forEach((element) => {
-			if (element.fechaEntregado !== 'Perdido' && element.fechaEntregado > element.fechaEntrega) {
-				final.push(element);
+			if (element.estadoPrestamo === 'devuelto') {
+				console.log('');
+			} else if (element.ticketEspecial !== null) {
+				if (new Date().getTime() > element.ticketEspecial.fechaTermino) {
+					final.push(element);
+				}
+			} else {
+				if (new Date().getTime() > element.fechaPrestamo) {
+					final.push(element);
+				}
 			}
 		});
-		return final;
-	});
+		console.log(final);
+		setAtrasados(final);
+	}, [ticketsSolicitados, startDate, endDate]);
 
-	const perdidos = useMemo(() => {
+	const [tickets, setTickets] = useState([]);
+
+	useMemo(() => {
 		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
 			return [];
 		}
-		const final = [];
-		ticketsSolicitados.forEach((element) => {
-			if (element.fechaEntregado === 'Perdido') {
-				final.push(element);
-			}
-		});
-		return final;
-	});
 
-	const [productos] = useState(productosGuardados);
+		const final = [];
+
+		let filteredTickets;
+
+		if (startDate !== undefined && endDate !== undefined) {
+			filteredTickets = [];
+			ticketsSolicitados.forEach((element) => {
+				if (element.fechaPrestamo >= startDate && element.fechaPrestamo <= endDate) {
+					filteredTickets.push(element);
+				}
+			});
+		} else {
+			filteredTickets = ticketsSolicitados;
+		}
+		ticketsSolicitados.forEach((element) => {
+			final.push(element);
+		});
+
+		// Por alguna razon, no puedo reorganizar filteredTickets si hago una copia directa de el, por lo que loa añado
+		// uno por uno y asi si funciona.
+		setTickets(final);
+	}, [ticketsSolicitados, startDate, endDate]);
 
 	const [selectedOption, setSelectedOption] = useState('');
 
@@ -157,6 +215,24 @@ export default function Inventario() {
 					<div className='d-flex flex-md-column flex-sm-wrap flex-wrap'>
 						<label
 							className={`report-checkbox ${
+								selectedOption === 'tickets'
+									? styles['report-checkbox-checked']
+									: styles['report-checkbox']
+							}`}
+							htmlFor='tickets'
+						>
+							<input
+								type='radio'
+								id='tickets'
+								name='tipoProducto'
+								value='tickets'
+								checked={selectedOption === 'tickets'}
+								onChange={handleChangeTipoFilter}
+							/>
+							<span>Tickets Generales</span>
+						</label>
+						<label
+							className={`report-checkbox ${
 								selectedOption === 'stock'
 									? styles['report-checkbox-checked']
 									: styles['report-checkbox']
@@ -171,7 +247,7 @@ export default function Inventario() {
 								checked={selectedOption === 'stock'}
 								onChange={handleChangeTipoFilter}
 							/>
-							<span>Stock disponible</span>
+							<span>Tickets Especiales</span>
 						</label>
 						<label
 							className={`report-checkbox ${
@@ -209,45 +285,7 @@ export default function Inventario() {
 							/>
 							<span>Devoluciones atrasadas</span>
 						</label>
-						<label
-							className={`report-checkbox ${
-								selectedOption === 'perdidos'
-									? styles['report-checkbox-checked']
-									: styles['report-checkbox']
-							}`}
-							htmlFor='perdidos'
-						>
-							<input
-								type='radio'
-								id='perdidos'
-								name='tipoProducto'
-								value='perdidos'
-								checked={selectedOption === 'perdidos'}
-								onChange={handleChangeTipoFilter}
-							/>
-							<span>Objetos mas perdidos</span>
-						</label>
 					</div>
-					<hr></hr>
-					{selectedOption !== '' && (
-						<label
-							className={`report-button ${
-								selectedOption === 'descargar'
-									? styles['report-button-pressed']
-									: styles['report-button']
-							}`}
-							htmlFor='descargar'
-						>
-							<input
-								type='button'
-								id='descargar'
-								name='decargar'
-								value='descargar'
-								checked={selectedOption === 'descargar'}
-							/>
-							<span>Descargar Reporte</span>
-						</label>
-					)}
 				</Col>
 				<Col xs={12} md={10}>
 					<div>
@@ -278,6 +316,7 @@ export default function Inventario() {
 							className={styles['calendar-container']}
 							type='date'
 							id='startDate'
+							max={endDate || undefined}
 							onChange={handleChangeStartDate}
 							name='ReportStart'
 						></input>
@@ -286,6 +325,7 @@ export default function Inventario() {
 							className={styles['calendar-container']}
 							type='date'
 							id='endDate'
+							min={startDate || undefined}
 							onChange={handleChangeEndDate}
 							name='ReportEnd'
 						></input>
@@ -293,17 +333,17 @@ export default function Inventario() {
 					{(() => {
 						switch (selectedOption) {
 							case 'stock':
-								if (loading) return <p>Cargando...</p>;
-								return <ReportTableStock productos={productos} />;
+								if (!ticketEspecial) return <p>Cargando...</p>;
+								return <ReportTableTicketEspeciales productos={ticketEspecial} sort={sortOrder} />;
 							case 'solicitados':
 								if (!masSolicitados) return <p>Cargando...</p>;
 								return <ReportTableSolicitados solicitudes={masSolicitados} sort={sortOrder} />;
 							case 'devoluciones':
-								if (!devoluciones) return <p>Cargando...</p>;
-								return <ReportTableDevoluciones productos={devoluciones} />;
-							case 'perdidos':
-								if (!perdidos) return <p>Cargando...</p>;
-								return <ReportTablePerdidos productos={perdidos} />;
+								if (!atrasados) return <p>Cargando...</p>;
+								return <ReportTableDevoluciones productos={atrasados} sort={sortOrder} />;
+							case 'tickets':
+								if (!tickets) return <p>Cargando...</p>;
+								return <ReportTableTickets productos={tickets} sort={sortOrder} />;
 							default:
 								return <p>Seleccione un reporte</p>;
 						}

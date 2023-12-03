@@ -37,8 +37,8 @@ export default function ReportTableSolicitados({ solicitudes, sort }) {
 						<th />
 						<th>Nombre</th>
 						<th>Detalle</th>
-						<th>Categoria</th>
-						<th align='center' className='align-middle'>
+						<th style={{ textAlign: 'center' }}>Categoria</th>
+						<th style={{ textAlign: 'center' }} align='center' className='align-middle'>
 							Veces Pedido
 						</th>
 					</tr>
@@ -51,8 +51,10 @@ export default function ReportTableSolicitados({ solicitudes, sort }) {
 							</td>
 							<td className='align-middle'>{ticket.nombre}</td>
 							<td className='align-middle'>{ticket.detalle}</td>
-							<td className='align-middle'>{ticket.categoria} </td>
-							<td align='center ' className='align-middle'>
+							<td style={{ textAlign: 'center' }} className='align-middle'>
+								{ticket.categoria}{' '}
+							</td>
+							<td style={{ textAlign: 'center' }} align='center ' className='align-middle'>
 								{ticket.vecesPedido}{' '}
 							</td>
 						</tr>
