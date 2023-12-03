@@ -291,15 +291,29 @@ export default function AddTicket({
 					)}
 					<Row>
 						<Col>
-							<Form.Check
-								type='switch'
-								id='formTicketEspecial'
-								label='¿Devolución en otro día?'
-								checked={formState.ticketEspecial}
-								onChange={() => {
-									setFormState({ ...formState, ticketEspecial: !formState.ticketEspecial });
-								}}
-							/>
+							{editandoTicket && (
+								<Form.Check
+									type='switch'
+									id='formTicketEspecial'
+									label='¿Devolución en otro día?'
+									checked={formState.ticketEspecial}
+									onChange={() => {
+										setFormState({ ...formState, ticketEspecial: !formState.ticketEspecial });
+									}}
+									disabled
+								/>
+							)}
+							{!editandoTicket && (
+								<Form.Check
+									type='switch'
+									id='formTicketEspecial'
+									label='¿Devolución en otro día?'
+									checked={formState.ticketEspecial}
+									onChange={() => {
+										setFormState({ ...formState, ticketEspecial: !formState.ticketEspecial });
+									}}
+								/>
+							)}
 						</Col>
 						<Col>
 							{formState.ticketEspecial && (

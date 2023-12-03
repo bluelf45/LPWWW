@@ -135,21 +135,6 @@ export default function Perfil() {
 						handleUpdateTicketButtonPressed={handleUpdateTicketButtonPressed}
 						usuarioElevado={ViewDefiner[tipoUsuario] < 3}
 					/>
-					{/* 
-						<Conditional
-							condition={ViewDefiner[tipoUsuario] > 2}
-							children1={<PrestamosTabla Usuarios={Usuarios} productos={ProductosVisibles} />}
-							children2={
-								<>
-									<PrestamosTablaAdmin
-										productos={ProductosVisibles}
-										Usuarios={Usuarios}
-										HandleEditPrestamo={HandleEditPrestamo}
-									/>
-								</>
-							}
-						/>
-						*/}
 				</Col>
 			</Row>
 			<AddTicket
