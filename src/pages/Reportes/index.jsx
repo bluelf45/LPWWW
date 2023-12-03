@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Layout from '@/components/Layout';
 import styles from './index.module.css';
@@ -6,148 +6,116 @@ import ReportTableStock from './ReportTableStock';
 import ReportTableSolicitados from './ReportTableSolicitados';
 import ReportTableDevoluciones from './ReportTableDevoluciones';
 import ReportTablePerdidos from './ReportTablePerdidos';
+import { GET_ALL_TICKETS } from './ReportQueries';
+import { useQuery } from '@apollo/client';
+import { GET_PRODUCTOS } from '../Inventario/DocumentNodes';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 export default function Inventario() {
-	const [productosGuardados] = useState([
-		{
-			id: 1,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Plumones de pizarra',
-			detalle: 'Plumon de pizarra color rojo',
-			cantidad: 6,
-		},
-		{
-			id: 2,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 2,
-		},
-		{
-			id: 3,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 8,
-		},
-		{
-			id: 4,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook AsusVivoBook',
-			detalle: 'Notebook AsusVivoBook con tarjeta de graficos integrados',
-			cantidad: 2,
-		},
-		{
-			id: 5,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Desatornillador',
-			detalle: 'Set de 6 desatornilladores en cruz y planos',
-			cantidad: 8,
-		},
-		{
-			id: 6,
-			disponible: false,
-			categoria: 'herramientas',
-			nombre: 'Sierra de madera',
-			detalle: 'Sierra usada para cartar trozos de madera',
-			cantidad: 8,
-		},
-		{
-			id: 7,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Cartulinas de colores',
-			detalle: 'Set de 10 cartulinas de colores',
-			cantidad: 8,
-		},
-		{
-			id: 8,
-			disponible: true,
-			categoria: 'equipos',
-			nombre: 'Tablets Samsung',
-			detalle: 'Tablets sansung con procesador',
-			cantidad: 8,
-		},
-	]);
+	const [ticketsSolicitados, setTicketsSolicitados] = useState(null);
 
-	const [productosSolicitados] = useState([
-		{
-			idSolicitud: 1000,
-			id: 1,
-			disponible: true,
-			categoria: 'materiales',
-			nombre: 'Plumones de pizarra',
-			detalle: 'Plumon de pizarra color rojo',
-			cantidad: 1,
-			nombrePersona: 'Juan Perez',
-			fechaSolicitud: '2021-06-01',
-			fechaEntrega: '2021-06-02',
-			fechaEntregado: '2021-06-02',
-		},
-		{
-			idSolicitud: 1001,
-			id: 2,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 4,
-			nombrePersona: 'Maria Gonzalez',
-			fechaSolicitud: '2021-06-01',
-			fechaEntrega: '2021-06-02',
-			fechaEntregado: '2021-06-04',
-		},
-		{
-			idSolicitud: 1002,
-			id: 3,
-			disponible: false,
-			categoria: 'equipos',
-			nombre: 'Notebook Samsung',
-			detalle: 'Notebook Samsung con procesador i10 de 20va generación.',
-			cantidad: 2,
-			nombrePersona: 'Robin Williams',
-			fechaSolicitud: '2021-06-01',
-			fechaEntrega: '2021-06-02',
-			fechaEntregado: '2021-06-02',
-		},
-		{
-			idSolicitud: 1003,
-			id: 2,
-			disponible: true,
-			categoria: 'herramientas',
-			nombre: 'Llaves Allen',
-			detalle: 'Set de llaves allen de distintos tamaños',
-			cantidad: 1,
-			nombrePersona: 'Roberto Robert',
-			fechaSolicitud: '2021-06-01',
-			fechaEntrega: '2021-06-02',
-			fechaEntregado: 'Perdido',
-		},
-	]);
+	const [sortOrder, setSortOrder] = useState('desc');
+	const [startDate, setStartDate] = useState();
+	const [endDate, setEndDate] = useState();
 
-	const [solicitados] = useState(() => {
-		const idUsed = [];
-		const final = [];
-		productosSolicitados.forEach((element) => {
-			if (!idUsed.includes(element.id)) {
-				idUsed.push(element.id);
-				final.push(element);
-			} else {
-				const index = idUsed.indexOf(element.id);
-				final[index].cantidad += element.cantidad;
-			}
-		});
-		return final;
+	const handleSortToggle = () => {
+		const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+		console.log(newSortOrder);
+		setSortOrder(newSortOrder);
+	};
+
+	const handleChangeStartDate = (e) => {
+		const selectedDate = new Date(e.target.value);
+		const unixTime = selectedDate.getTime();
+		console.log(unixTime);
+		setStartDate(unixTime);
+	};
+
+	const handleChangeEndDate = (e) => {
+		const selectedDate = new Date(e.target.value);
+		const unixTime = selectedDate.getTime();
+		console.log(unixTime);
+		setEndDate(unixTime);
+	};
+
+	const { loading, error, data } = useQuery(GET_ALL_TICKETS, {
+		variables: { page: 1, limit: 4 },
 	});
 
-	const [devoluciones] = useState(() => {
+	useEffect(() => {
+		if (loading) return;
+
+		if (error) {
+			console.error(`Error! ${error.message}`);
+			return;
+		}
+		console.log(data);
+		setTicketsSolicitados(data?.getAllTickets || []);
+	}, [loading, error, data]);
+
+	const [productosGuardados, setProductosGuardados] = useState([]);
+
+	const { loadingPro, errorPro, dataPro } = useQuery(GET_PRODUCTOS);
+
+	useEffect(() => {
+		if (loadingPro) return;
+
+		if (errorPro) {
+			console.error(`Error! ${error.message}`);
+			return;
+		}
+
+		setProductosGuardados(dataPro?.getProductos || []);
+	}, [loadingPro, errorPro, dataPro]);
+
+	const [masSolicitados, setMasSolicitados] = useState([]);
+
+	useMemo(() => {
+		// Objetos mas solicitados (En funcion de la cantidad de tickets)
+		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
+			return [];
+		}
+		const idUsed = [];
 		const final = [];
-		productosSolicitados.forEach((element) => {
+		let filteredTickets;
+
+		if (startDate !== undefined && endDate !== undefined) {
+			filteredTickets = [];
+			ticketsSolicitados.forEach((element) => {
+				console.log(element.fechaPrestamo);
+				console.log(startDate, ' > ', element.fechaPrestamo, ' < ', endDate);
+				if (element.fechaPrestamo >= startDate && element.fechaPrestamo <= endDate) {
+					filteredTickets.push(element);
+				}
+			});
+		} else {
+			console.log('no hay fechas');
+			filteredTickets = ticketsSolicitados;
+		}
+
+		console.log(filteredTickets);
+
+		filteredTickets.forEach((element) => {
+			if (!idUsed.includes(element.producto.id)) {
+				const copiedObject = { ...element.producto, vecesPedido: 1 };
+				idUsed.push(element.producto.id);
+				final.push(copiedObject);
+				console.log(copiedObject);
+			} else {
+				const index = idUsed.indexOf(element.producto.id);
+				final[index].vecesPedido += 1;
+			}
+		});
+
+		setMasSolicitados(final.sort((a, b) => (a.vecesPedido < b.vecesPedido ? 1 : -1)));
+	}, [ticketsSolicitados, startDate, endDate]);
+
+	const devoluciones = useMemo(() => {
+		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
+			return [];
+		}
+		const final = [];
+		ticketsSolicitados.forEach((element) => {
 			if (element.fechaEntregado !== 'Perdido' && element.fechaEntregado > element.fechaEntrega) {
 				final.push(element);
 			}
@@ -155,9 +123,12 @@ export default function Inventario() {
 		return final;
 	});
 
-	const [perdidos] = useState(() => {
+	const perdidos = useMemo(() => {
+		if (!ticketsSolicitados || !Array.isArray(ticketsSolicitados)) {
+			return [];
+		}
 		const final = [];
-		productosSolicitados.forEach((element) => {
+		ticketsSolicitados.forEach((element) => {
 			if (element.fechaEntregado === 'Perdido') {
 				final.push(element);
 			}
@@ -171,7 +142,6 @@ export default function Inventario() {
 
 	const handleChangeTipoFilter = (e) => {
 		setSelectedOption(e.target.value);
-		console.log(e.target.value);
 	};
 
 	return (
@@ -280,15 +250,59 @@ export default function Inventario() {
 					)}
 				</Col>
 				<Col xs={12} md={10}>
+					<div>
+						Orden:
+						<label
+							className={`${
+								sortOrder === 'asc' ? styles['report-checkbox-checked'] : styles['report-checkbox']
+							}`}
+							htmlFor='disponible'
+						>
+							<input type='checkbox' id='disponible' onChange={handleSortToggle} />
+							<span>
+								{sortOrder === 'asc' ? (
+									<div style={{ marginRight: '1rem', marginLeft: '1rem' }}>
+										Des.
+										<FaArrowDown />
+									</div>
+								) : (
+									<div style={{ marginRight: '1rem', marginLeft: '1rem' }}>
+										Asc.
+										<FaArrowUp />
+									</div>
+								)}
+							</span>
+						</label>
+						Periodo:
+						<input
+							className={styles['calendar-container']}
+							type='date'
+							id='startDate'
+							onChange={handleChangeStartDate}
+							name='ReportStart'
+						></input>
+						-
+						<input
+							className={styles['calendar-container']}
+							type='date'
+							id='endDate'
+							onChange={handleChangeEndDate}
+							name='ReportEnd'
+						></input>
+					</div>
 					{(() => {
 						switch (selectedOption) {
 							case 'stock':
+								if (loading) return <p>Cargando...</p>;
 								return <ReportTableStock productos={productos} />;
 							case 'solicitados':
-								return <ReportTableSolicitados solicitudes={solicitados} />;
+								if (!masSolicitados) return <p>Cargando...</p>;
+								return <ReportTableSolicitados solicitudes={masSolicitados} sort={sortOrder} />;
 							case 'devoluciones':
+								if (!devoluciones) return <p>Cargando...</p>;
 								return <ReportTableDevoluciones productos={devoluciones} />;
 							case 'perdidos':
+								if (!perdidos) return <p>Cargando...</p>;
 								return <ReportTablePerdidos productos={perdidos} />;
 							default:
 								return <p>Seleccione un reporte</p>;
