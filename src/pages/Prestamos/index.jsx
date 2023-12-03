@@ -26,7 +26,6 @@ export default function Perfil() {
 		paginaActiva: 1,
 	});
 
-	// const [FechaProducto, setFechaProducto] = useState(Date.now());
 	const [editandoTicket, setEditandoTicket] = useState(false);
 	const [ticketEditar, setTicketEditar] = useState({});
 	const [showTicketModal, setShowTicketModal] = useState(false);
@@ -75,17 +74,18 @@ export default function Perfil() {
 			ticketEspecial = true;
 		}
 
-		setShowTicketModal(true);
 		setEditandoTicket(true);
 		setTicketEditar({
 			id: ticket.id,
-			rut: ticket.rut,
-			producto: ticket.producto.id,
+			rut: [ticket.rut],
+			producto: [{ id: ticket.producto.id, producto: ticket.producto.nombre }],
 			estadoPrestamo: ticket.estadoPrestamo,
 			estadoTicket: ticket.estadoTicket,
 			ticketEspecial,
 			fechaTermino: ticketEspecial ? new Date(ticket.ticketEspecial.fechaTermino) : '',
 		});
+
+		setShowTicketModal(true);
 	};
 
 	useEffect(() => {
