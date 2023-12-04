@@ -1,11 +1,11 @@
+import React, { useState, useEffect } from 'react';
 import { Table, Image, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { PaginationControl } from 'react-bootstrap-pagination-control';
 import styles from './index.module.css';
 import { FaImage } from 'react-icons/fa6';
-import { useState, useEffect } from 'react';
-import { PaginationControl } from 'react-bootstrap-pagination-control';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function ReportTableDevoluciones({ data, sort }) {
+export default function ReportTableTicketEspeciales({ data, sort }) {
 	const [productos, setProductos] = useState(data);
 	const [page, SetPage] = useState(1);
 	const [sortOrder, setSortOrder] = useState();
@@ -42,22 +42,25 @@ export default function ReportTableDevoluciones({ data, sort }) {
 						<th style={{ textAlign: 'center' }}>Estado</th>
 						<th style={{ textAlign: 'center' }}>Rut</th>
 						<th style={{ textAlign: 'center' }} align='center'>
-							Fecha devolucion
+							Fecha Solicitado
+						</th>
+						<th style={{ textAlign: 'center' }} align='center' className='align-middle'>
+							Fecha Devolucion
 						</th>
 					</tr>
 				</thead>
 				<tbody>
-					{currentPageData.map((producto) => (
-						<tr key={producto.id}>
+					{currentPageData.map((ticket) => (
+						<tr key={ticket.id}>
 							<td align='center' className='align-middle'>
-								{producto.producto.image === '' && (
+								{ticket.producto.image === '' && (
 									<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
 								)}
-								{producto.producto.image !== '' && (
+								{ticket.producto.image !== '' && (
 									<>
 										<Image
 											style={{ width: '2rem', cursor: 'pointer' }}
-											src={producto.producto.image}
+											src={ticket.producto.image}
 											onClick={() => setShowModalImage(true)}
 											rounded
 										/>
@@ -69,37 +72,38 @@ export default function ReportTableDevoluciones({ data, sort }) {
 											aria-labelledby='contained-modal-title-vcenter'
 											centered
 										>
-											<Modal.Header closeButton>{producto.producto.nombre}</Modal.Header>
+											<Modal.Header closeButton>{ticket.producto.nombre}</Modal.Header>
 											<Modal.Body className='text-center'>
-												<Image src={producto.producto.image} fluid />
+												<Image src={ticket.producto.image} fluid />
 											</Modal.Body>
 										</Modal>
 									</>
 								)}
 							</td>
-							<td className='align-middle'>{producto.producto.nombre}</td>
-							<td className='align-middle'>{producto.producto.detalle}</td>
+							<td className='align-middle'>{ticket.producto.nombre}</td>
+							<td className='align-middle'>{ticket.producto.detalle}</td>
 							<td style={{ textAlign: 'center' }} className='align-middle'>
-								{producto.producto.categoria}
+								{ticket.producto.categoria}
 							</td>
 							<td style={{ textAlign: 'center' }} className='align-middle'>
-								{producto.estadoPrestamo}
+								{ticket.estadoPrestamo}
 							</td>
 							<td style={{ textAlign: 'center' }} className='align-middle'>
-								{producto.rut}
+								{ticket.rut}
 							</td>
 							<td align='center' className='align-middle'>
-								{producto.ticketEspecial != null
-									? new Date(producto.ticketEspecial.fechaTermino).toLocaleString('en-US', {
-											day: '2-digit',
-											month: '2-digit',
-											year: 'numeric',
-									  })
-									: new Date(producto.fechaPrestamo).toLocaleString('en-US', {
-											day: '2-digit',
-											month: '2-digit',
-											year: 'numeric',
-									  })}
+								{new Date(ticket.fechaPrestamo).toLocaleString('en-US', {
+									day: '2-digit',
+									month: '2-digit',
+									year: 'numeric',
+								})}
+							</td>
+							<td align='center' className='align-middle'>
+								{new Date(ticket.ticketEspecial.fechaTermino).toLocaleString('en-US', {
+									day: '2-digit',
+									month: '2-digit',
+									year: 'numeric',
+								})}
 							</td>
 						</tr>
 					))}
@@ -108,7 +112,7 @@ export default function ReportTableDevoluciones({ data, sort }) {
 			<PaginationControl
 				page={page}
 				between={4}
-				total={currentPageData.length}
+				total={productos.length}
 				limit={5}
 				changePage={(page) => {
 					SetPage(page);

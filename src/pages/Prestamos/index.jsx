@@ -37,7 +37,7 @@ export default function Perfil() {
 		variables: {
 			page: paginacionParams.paginaActiva,
 			limit: paginacionParams.elementosPorPagina,
-			ticketFilter: [],
+			ticketFilter,
 			rutUsuario,
 		},
 	});

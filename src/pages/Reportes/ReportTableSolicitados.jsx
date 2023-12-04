@@ -1,4 +1,4 @@
-import { Table } from 'react-bootstrap';
+import { Table, Image, Modal } from 'react-bootstrap';
 import styles from './index.module.css';
 import { FaImage } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
@@ -8,9 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // No tengo idea si hay que contar la cantidad de veces que algo se ha pedido,
 // o la cantidad de productos pedidos. Lo hice para que contara la cantidad de veces que se han prestado en total
 
-export default function ReportTableSolicitados({ solicitudes, sort }) {
+export default function ReportTableSolicitados({ data, sort }) {
+	const [solicitudes, setSolicitudes] = useState(data);
 	const [page, SetPage] = useState(1);
-	const [sortOrder, setSortOrder] = useState('asc');
+	const [sortOrder, setSortOrder] = useState();
+	const [showModalImage, setShowModalImage] = useState(false);
 	const startIndex = (page - 1) * 5;
 	const endIndex = startIndex + 5;
 	const currentPageData = solicitudes.slice(startIndex, endIndex);
@@ -22,11 +24,13 @@ export default function ReportTableSolicitados({ solicitudes, sort }) {
 	});
 
 	useEffect(() => {
+		const sortedProductos = [...solicitudes];
 		if (sortOrder === 'asc') {
-			solicitudes.sort((a, b) => (a.vecesPedido > b.vecesPedido ? 1 : -1));
+			sortedProductos.sort((a, b) => (a.vecesPedido > b.vecesPedido ? 1 : -1));
 		} else {
-			solicitudes.sort((a, b) => (a.vecesPedido < b.vecesPedido ? 1 : -1));
+			sortedProductos.sort((a, b) => (a.vecesPedido < b.vecesPedido ? 1 : -1));
 		}
+		setSolicitudes(sortedProductos);
 	}, [sortOrder]);
 
 	return (
@@ -37,8 +41,8 @@ export default function ReportTableSolicitados({ solicitudes, sort }) {
 						<th />
 						<th>Nombre</th>
 						<th>Detalle</th>
-						<th>Categoria</th>
-						<th align='center' className='align-middle'>
+						<th style={{ textAlign: 'center' }}>Categoria</th>
+						<th style={{ textAlign: 'center' }} align='center' className='align-middle'>
 							Veces Pedido
 						</th>
 					</tr>
@@ -47,12 +51,39 @@ export default function ReportTableSolicitados({ solicitudes, sort }) {
 					{currentPageData.map((ticket) => (
 						<tr key={ticket.id}>
 							<td align='center' className='align-middle'>
-								<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+								{ticket.image === '' && (
+									<FaImage size='2rem' style={{ color: 'var(--alt-text-color)' }} />
+								)}
+								{ticket.image !== '' && (
+									<>
+										<Image
+											style={{ width: '2rem', cursor: 'pointer' }}
+											src={ticket.image}
+											onClick={() => setShowModalImage(true)}
+											rounded
+										/>
+
+										<Modal
+											show={showModalImage}
+											onHide={() => setShowModalImage(false)}
+											size='sm'
+											aria-labelledby='contained-modal-title-vcenter'
+											centered
+										>
+											<Modal.Header closeButton>{ticket.nombre}</Modal.Header>
+											<Modal.Body className='text-center'>
+												<Image src={ticket.image} fluid />
+											</Modal.Body>
+										</Modal>
+									</>
+								)}
 							</td>
 							<td className='align-middle'>{ticket.nombre}</td>
 							<td className='align-middle'>{ticket.detalle}</td>
-							<td className='align-middle'>{ticket.categoria} </td>
-							<td align='center ' className='align-middle'>
+							<td style={{ textAlign: 'center' }} className='align-middle'>
+								{ticket.categoria}{' '}
+							</td>
+							<td style={{ textAlign: 'center' }} align='center ' className='align-middle'>
 								{ticket.vecesPedido}{' '}
 							</td>
 						</tr>
